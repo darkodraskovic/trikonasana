@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "Display.h"
-#include "Draw.h"
+#include "Renderer/Display.h"
+#include "Renderer/Draw.h"
 #include "Application.h"
-#include "Vector.h"
+#include "Math/Vector.h"
 
 void start(void) {
     
