@@ -39,9 +39,8 @@ bool initializeWindow(void) {
 
 
 void initializeColorBuffer(void) {
-    colorBuffer = (uint32_t *)malloc(sizeof(Uint32) * windowWidth * windowHeight);
-    colorBufferTexture =
-        SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+    colorBuffer = (uint32_t*)malloc(sizeof(uint32_t) * windowWidth * windowHeight);
+    colorBufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                           SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
@@ -74,4 +73,9 @@ void destroyWindow(void) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void drawPixel(int x, int y, uint32_t color) {
+    if (x > -1 && x < windowWidth && y > -1 && y < windowHeight)
+        colorBuffer[windowWidth * y + x] = color;
 }
