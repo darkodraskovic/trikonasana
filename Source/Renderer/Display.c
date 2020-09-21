@@ -59,9 +59,6 @@ void clearColorBuffer(uint32_t color) {
 }
 
 void render(void) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-
     renderColorBuffer();
     clearColorBuffer(clearColor);
 
@@ -73,9 +70,4 @@ void destroyWindow(void) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-}
-
-void drawPixel(int x, int y, uint32_t color) {
-    if (x > -1 && x < windowWidth && y > -1 && y < windowHeight)
-        colorBuffer[windowWidth * y + x] = color;
 }

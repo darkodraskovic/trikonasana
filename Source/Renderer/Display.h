@@ -24,6 +24,4 @@ void clearColorBuffer(uint32_t color);
 void render(void);
 void destroyWindow(void);
 
-void drawPixel(int x, int y, uint32_t color);
-
 #endif /* DISPLAY_H */

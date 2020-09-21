@@ -6,6 +6,7 @@ bool isRunning = false;
 void initApp() {
     isRunning = initializeWindow();
     initializeColorBuffer();
+    
     start();
 }
 
