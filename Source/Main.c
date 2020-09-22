@@ -1,20 +1,41 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "Renderer/Display.h"
-#include "Renderer/Draw.h"
-#include "Renderer/Consts.h"
-#include "Application.h"
+#include "Graphics/Consts.h"
+#include "Graphics/Display.h"
+#include "Graphics/Draw.h"
+#include "Application/Application.h"
 #include "Math/Vector.h"
 
 #define N_POINTS 9 * 9 * 9
 
-Vector3 points[N_POINTS];
-Vector2 projectedPoints[N_POINTS];
+Vec3 points[N_POINTS];
+Vec2 projectedPoints[N_POINTS];
 
 int fovFactor = 512;
-Vector3 cameraPosition = {.x = 0, .y = 0, .z = -5};
-Vector3 cubeRotation = {.x = 0, .y = 0, .z = 0};
+Vec3 cameraPosition = {.x = 0, .y = 0, .z = -5};
+Vec3 cubeRotation = {.x = 0, .y = 0, .z = 0};
+
+Vec2 projectOrtho(Vec3 point) {
+    float x = point.x * fovFactor + windowWidth / 2;
+    float y = point.y * fovFactor + windowHeight / 2;
+    Vec2 projectedPoint = { .x = x, .y = y };
+    return projectedPoint;
+}
+
+Vec2 projectPerspective(Vec3 point) {
+    point.z -= cameraPosition.z;
+    float x = point.x / point.z;
+    x = x * fovFactor + windowWidth / 2;
+    float y = point.y / point.z;
+    y = y * fovFactor + windowHeight / 2;
+    Vec2 projectedPoint = { .x = x, .y = y };
+    return projectedPoint;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Callbacks
+////////////////////////////////////////////////////////////////////////////////
 
 void start(void) {
     float step = 0.25f;
@@ -22,37 +43,31 @@ void start(void) {
     for (float x = -1; x <= 1; x += step) {
         for (float y = -1; y <= 1; y += step) {
             for (float z = -1; z <= 1; z += step) {
-                Vector3 point = {x, y, z};
+                Vec3 point = {x, y, z};
                 points[cnt++] = point;
             }    
         }        
     }
 }
 
-Vector2 projectOrtho(Vector3 point) {
-    float x = point.x * fovFactor + windowWidth / 2;
-    float y = point.y * fovFactor + windowHeight / 2;
-    Vector2 projectedPoint = { .x = x, .y = y };
-    return projectedPoint;
-}
-
-Vector2 projectPerspective(Vector3 point) {
-    point.z -= cameraPosition.z;
-    float x = point.x / point.z;
-    x = x * fovFactor + windowWidth / 2;
-    float y = point.y / point.z;
-    y = y * fovFactor + windowHeight / 2;
-    Vector2 projectedPoint = { .x = x, .y = y };
-    return projectedPoint;
+void input() {
+    
 }
 
 void update(void) {
-    cubeRotation.y += 0.1;
+    cubeRotation.x += 0.001;
+    cubeRotation.y += 0.001;
+    cubeRotation.z += 0.001;
     for (int i = 0; i < N_POINTS; ++i) {
-         projectedPoints[i] = projectPerspective(points[i]);
+        Vec3 point = points[i];
+        point = rotateVec3X(point, cubeRotation.x);
+        point = rotateVec3Y(point, cubeRotation.y);
+        point = rotateVec3Z(point, cubeRotation.z);
+        
+        projectedPoints[i] = projectPerspective(point);
     }
     for (int i = 0; i < N_POINTS; ++i) {
-        Vector2 pp =  projectedPoints[i];
+        Vec2 pp =  projectedPoints[i];
         drawRect(pp.x, pp.y, 4, 4, CYAN);
     }
     /* drawGrid(0xFFFF0000, 0, 0, windowWidth, windowHeight, 10); */
@@ -60,6 +75,16 @@ void update(void) {
     /* drawRect(30, 30, 50, 100, YELLOW); */
 }
 
+void draw(void) {
+    
+}
+
+void stop(void) {
+    
+}
+
+
+// Application
 int main(int argc, char *argv[]){
     runApp();
     return 0;

@@ -1,24 +1,28 @@
 #include "Application.h"
-#include "Renderer/Display.h"
+#include "Graphics/Display.h"
 
 bool isRunning = false;
 
 void initApp() {
-    isRunning = initializeWindow();
-    initializeColorBuffer();
-    
-    start();
+    isRunning = initWindow();
+    initColorBuffer();
 }
 
 void runApp(){
     initApp();
+    start();
 
     while (isRunning) {
         processInput();
+        
+        input();
         update();
+        draw();
+        
         render();
     }
-    
+
+    stop();
     destroyWindow();
 }
 
@@ -34,5 +38,5 @@ void processInput(void) {
         if (event.key.keysym.sym == SDLK_ESCAPE)
             isRunning = false;
         break;
-    }
+    }    
 }

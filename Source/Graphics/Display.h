@@ -16,8 +16,8 @@ extern uint32_t clearColor;
 extern int windowWidth;
 extern int windowHeight;
 
-bool initializeWindow(void);
-void initializeColorBuffer(void);
+bool initWindow(void);
+void initColorBuffer(void);
 void renderColorBuffer(void);
 void clearColorBuffer(uint32_t color);
 

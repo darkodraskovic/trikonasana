@@ -7,7 +7,9 @@ void processInput(void);
 
 // callbacks
 void start(void);
+void input(void);
 void update(void);
+void draw(void);
 void stop(void);
 
 #endif /* APPLICATION_H */
