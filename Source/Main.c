@@ -55,9 +55,10 @@ void input() {
 }
 
 void update(void) {
-    cubeRotation.x += 0.001;
-    cubeRotation.y += 0.001;
-    cubeRotation.z += 0.001;
+    float rotSpeed = 0.01;
+    cubeRotation.x += rotSpeed;
+    cubeRotation.y += rotSpeed;
+    cubeRotation.z += rotSpeed;
     for (int i = 0; i < N_POINTS; ++i) {
         Vec3 point = points[i];
         point = rotateVec3X(point, cubeRotation.x);
@@ -66,23 +67,21 @@ void update(void) {
         
         projectedPoints[i] = projectPerspective(point);
     }
-    for (int i = 0; i < N_POINTS; ++i) {
-        Vec2 pp =  projectedPoints[i];
-        drawRect(pp.x, pp.y, 4, 4, CYAN);
-    }
     /* drawGrid(0xFFFF0000, 0, 0, windowWidth, windowHeight, 10); */
     /* drawPixel(windowWidth / 2, windowHeight / 2, 0xFF00FF00); */
     /* drawRect(30, 30, 50, 100, YELLOW); */
 }
 
 void draw(void) {
-    
+    for (int i = 0; i < N_POINTS; ++i) {
+        Vec2 pp =  projectedPoints[i];
+        drawRect(pp.x, pp.y, 4, 4, CYAN);
+    }    
 }
 
 void stop(void) {
     
 }
-
 
 // Application
 int main(int argc, char *argv[]){

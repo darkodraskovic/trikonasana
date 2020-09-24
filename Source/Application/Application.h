@@ -1,6 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+extern float msPerUpdate;
+
 void initApp();
 void runApp();
 void processInput(void);
