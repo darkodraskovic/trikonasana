@@ -6,9 +6,7 @@
 
 bool isRunning = false;
 
-/* Uint32 elapsedTime = 0; */
 Uint32 previousFrame = 0;
-Uint32 frameLag = 0;
 float msPerUpdate = 1000 / 60;
 
 void initApp() {
@@ -21,24 +19,16 @@ void runApp(){
     start();
 
     while (isRunning) {
-        /* Uint32 timeout = elapsedTime + deltaTime; */
-        /* while (!SDL_TICKS_PASSED(SDL_GetTicks(), timeout)) { */
-        /*     // lock execution */
-        /* }; */
-        /* elapsedTime = SDL_GetTicks(); */
-        
-        Uint32 current = SDL_GetTicks();
-        Uint32 elapsed = current - previousFrame;
-        previousFrame = current;
-        frameLag += elapsed;
+        int waitTime = msPerUpdate - (SDL_GetTicks() - previousFrame);
+        if (waitTime > 0) {
+            SDL_Delay(waitTime);
+        }
+        previousFrame = SDL_GetTicks();
         
         processInput();
         input();
 
-        while (frameLag >= msPerUpdate) {
-            update();
-            frameLag -= msPerUpdate;
-        }
+        update();
         
         draw();
         render();

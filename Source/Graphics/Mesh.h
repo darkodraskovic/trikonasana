@@ -2,17 +2,20 @@
 #define MESH_H
 
 #include "Math/Vector.h"
-#include "Triangle.h"
 
-#define N_MESH_VERTICES 8
-extern Vec3 meshVertices[N_MESH_VERTICES];
+typedef struct {
+    unsigned numVertices;
+    unsigned numTris;
+    Vec3f* vertices;
+    Vec3i* tris;
+} Mesh;
 
-#define N_MESH_FACES (6 * 2) // 6 cube faces, 2 triangles per face
-extern Face meshFaces[N_MESH_FACES];
+Vec3f* rotateMesh(Mesh* mesh, Vec3f rotation);
 
-// typedef struct {
-//     Vec3* vertices;
-//     Face* faces;
-// } Mesh;
+#define N_CUBE_VERTICES 8
+extern Vec3f cubeVertices[N_CUBE_VERTICES];
+
+#define N_CUBE_TRIS (6 * 2) // 6 cube faces, 2 triangles per face
+extern Vec3i cubeTris[N_CUBE_TRIS];
 
 #endif /* MESH_H */

@@ -1,6 +1,8 @@
 #include "Mesh.h"
+#include "Math/Vector.h"
+#include <stdlib.h>
 
-Vec3 meshVertices[N_MESH_VERTICES] = {
+Vec3f cubeVertices[N_CUBE_VERTICES] = {
     { .x = -1, .y = -1, .z = -1 }, // 0
     { .x = -1, .y =  1, .z = -1 }, // 1
     { .x =  1, .y =  1, .z = -1 }, // 2
@@ -11,23 +13,44 @@ Vec3 meshVertices[N_MESH_VERTICES] = {
     { .x = -1, .y = -1, .z =  1 }  // 7
 };                                 
 
-Face meshFaces[N_MESH_FACES] = {
+Vec3i cubeTris[N_CUBE_TRIS] = {
     // front
-    { .a = 0, .b = 1, .c = 2 },
-    { .a = 0, .b = 2, .c = 3 },
+    { .x = 0, .y = 1, .z = 2 },
+    { .x = 0, .y = 2, .z = 3 },
     // right
-    { .a = 3, .b = 2, .c = 4 },
-    { .a = 3, .b = 4, .c = 5 },
+    { .x = 3, .y = 2, .z = 4 },
+    { .x = 3, .y = 4, .z = 5 },
     // back
-    { .a = 5, .b = 4, .c = 6 },
-    { .a = 5, .b = 6, .c = 7 },
+    { .x = 5, .y = 4, .z = 6 },
+    { .x = 5, .y = 6, .z = 7 },
     // left
-    { .a = 7, .b = 6, .c = 1 },
-    { .a = 7, .b = 1, .c = 0 },
+    { .x = 7, .y = 6, .z = 1 },
+    { .x = 7, .y = 1, .z = 0 },
     // top
-    { .a = 1, .b = 6, .c = 4 },
-    { .a = 1, .b = 4, .c = 2 },
+    { .x = 1, .y = 6, .z = 4 },
+    { .x = 1, .y = 4, .z = 2 },
     // bottom
-    { .a = 5, .b = 7, .c = 0 },
-    { .a = 5, .b = 0, .c = 3 }
+    { .x = 5, .y = 7, .z = 0 },
+    { .x = 5, .y = 0, .z = 3 }
 };
+
+Vec3f* rotateMesh(Mesh* mesh, Vec3f rotation) {
+    Vec3f *rotatedVertices = (Vec3f *)malloc(sizeof(Vec3f) * mesh->numTris * 3);
+    for (int i = 0; i < mesh->numTris; i++) {
+        Vec3i tri = mesh->tris[i];
+        Vec3f triVertices[3] = {
+            mesh->vertices[tri.x],
+            mesh->vertices[tri.y],
+            mesh->vertices[tri.z],
+        };
+
+        for (int j = 0; j < 3; j++) {
+            Vec3f *transformed = &triVertices[j];
+            *transformed = rotateVec3fX(transformed, rotation.x);
+            *transformed = rotateVec3fY(transformed, rotation.y);
+            *transformed = rotateVec3fZ(transformed, rotation.z);
+            rotatedVertices[i * 3 + j] = *transformed;
+        }
+    }
+    return rotatedVertices;
+}

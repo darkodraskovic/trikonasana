@@ -2,18 +2,29 @@
 #define VECTOR_H
 
 typedef struct {
+    int x;
+    int y;
+} Vec2i;
+
+typedef struct {
+    int x;
+    int y;
+    int z;
+} Vec3i;
+
+typedef struct {
     float x;
     float y;
-} Vec2;
+} Vec2f;
 
 typedef struct {
     float x;
     float y;
     float z;
-} Vec3;
+} Vec3f;
 
-Vec3 rotateVec3X(Vec3 v, float angle);
-Vec3 rotateVec3Y(Vec3 v, float angle);
-Vec3 rotateVec3Z(Vec3 v, float angle);
+Vec3f rotateVec3fX(const Vec3f* v, float angle);
+Vec3f rotateVec3fY(const Vec3f* v, float angle);
+Vec3f rotateVec3fZ(const Vec3f* v, float angle);
 
 #endif /* VECTOR_H */
