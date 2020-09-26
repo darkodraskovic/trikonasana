@@ -9,7 +9,7 @@ void drawPixel(int x, int y, uint32_t color) {
 void drawGrid(uint32_t color, int x, int y, int width, int height, int distance) {
     for (int j = y; j < height; j += distance) {
         for (int i = x; i < width; i += distance) {
-            colorBuffer[windowWidth * j + i] = color;
+            drawPixel(i, j, color);
         }
     }
 };
@@ -17,7 +17,6 @@ void drawGrid(uint32_t color, int x, int y, int width, int height, int distance)
 void drawRect(int x, int y, int width, int height, uint32_t color) {
     for (int j = y; j < y + height; j ++) {
         for (int i = x; i < x + width; i ++) {
-            /* colorBuffer[windowWidth * j + i] = color; */
             drawPixel(i, j, color);
         }
     }

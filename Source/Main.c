@@ -4,17 +4,13 @@
 #include "Graphics/Consts.h"
 #include "Graphics/Display.h"
 #include "Graphics/Draw.h"
+#include "Graphics/Triangle.h"
+#include "Graphics/Mesh.h"
 #include "Application/Application.h"
 #include "Math/Vector.h"
 
-#define N_POINTS 9 * 9 * 9
-
-Vec3 points[N_POINTS];
-Vec2 projectedPoints[N_POINTS];
-
 int fovFactor = 512;
 Vec3 cameraPosition = {.x = 0, .y = 0, .z = -5};
-Vec3 cubeRotation = {.x = 0, .y = 0, .z = 0};
 
 Vec2 projectOrtho(Vec3 point) {
     float x = point.x * fovFactor + windowWidth / 2;
@@ -36,18 +32,11 @@ Vec2 projectPerspective(Vec3 point) {
 ////////////////////////////////////////////////////////////////////////////////
 // Callbacks
 ////////////////////////////////////////////////////////////////////////////////
-
+Vec3 cubeRotation = {.x = 0, .y = 0, .z = 0};
+Tri2 trianglesToRender[N_MESH_FACES];
+    
 void start(void) {
-    float step = 0.25f;
-    int cnt = 0;
-    for (float x = -1; x <= 1; x += step) {
-        for (float y = -1; y <= 1; y += step) {
-            for (float z = -1; z <= 1; z += step) {
-                Vec3 point = {x, y, z};
-                points[cnt++] = point;
-            }    
-        }        
-    }
+
 }
 
 void input() {
@@ -59,24 +48,40 @@ void update(void) {
     cubeRotation.x += rotSpeed;
     cubeRotation.y += rotSpeed;
     cubeRotation.z += rotSpeed;
-    for (int i = 0; i < N_POINTS; ++i) {
-        Vec3 point = points[i];
-        point = rotateVec3X(point, cubeRotation.x);
-        point = rotateVec3Y(point, cubeRotation.y);
-        point = rotateVec3Z(point, cubeRotation.z);
-        
-        projectedPoints[i] = projectPerspective(point);
-    }
-    /* drawGrid(0xFFFF0000, 0, 0, windowWidth, windowHeight, 10); */
-    /* drawPixel(windowWidth / 2, windowHeight / 2, 0xFF00FF00); */
-    /* drawRect(30, 30, 50, 100, YELLOW); */
+
 }
 
 void draw(void) {
-    for (int i = 0; i < N_POINTS; ++i) {
-        Vec2 pp =  projectedPoints[i];
-        drawRect(pp.x, pp.y, 4, 4, CYAN);
-    }    
+    /* drawGrid(0xFFFF0000, 0, 0, windowWidth, windowHeight, 10); */
+    /* drawRect(30, 30, 50, 100, YELLOW); */
+    
+    for (int i = 0; i < N_MESH_FACES; i++) {
+        Face face = meshFaces[i];
+        Vec3 vertices[3];
+        vertices[0] = meshVertices[face.a];
+        vertices[1] = meshVertices[face.b];
+        vertices[2] = meshVertices[face.c];
+
+        Tri2 projectedTriangle;
+        for (int j = 0; j < 3; j++) {
+            Vec3 transformedVertex = vertices[j];
+            transformedVertex = rotateVec3X(transformedVertex, cubeRotation.x);
+            transformedVertex = rotateVec3Y(transformedVertex, cubeRotation.y);
+            transformedVertex = rotateVec3Z(transformedVertex, cubeRotation.z);
+
+            projectedTriangle.points[j] = projectPerspective(transformedVertex);
+        }
+
+        trianglesToRender[i] = projectedTriangle;
+    }
+
+    for (int i = 0; i < N_MESH_FACES; ++i) {
+        Tri2 tri = trianglesToRender[i];
+        for (int j = 0; j < 3; ++j) {
+            Vec2 point = tri.points[j];
+            drawRect(point.x, point.y, 4, 4, BLUE);
+        }
+    }
 }
 
 void stop(void) {

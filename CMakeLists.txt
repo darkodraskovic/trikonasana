@@ -7,6 +7,8 @@ add_library(engine SHARED
   Source/Application/Application.c
   Source/Graphics/Display.c
   Source/Graphics/Draw.c
+  Source/Graphics/Mesh.c
+  Source/Graphics/Triangle.c
   Source/Math/Vector.c  
   )
 target_include_directories(engine PUBLIC Source)
