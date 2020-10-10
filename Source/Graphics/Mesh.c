@@ -35,7 +35,7 @@ Vec3i cubeTris[N_CUBE_TRIS] = {
 };
 
 Vec3f* rotateMesh(Mesh* mesh, Vec3f rotation) {
-    Vec3f *rotatedVertices = (Vec3f *)malloc(sizeof(Vec3f) * mesh->numTris * 3);
+    Vec3f* rotatedVertices = (Vec3f*)malloc(sizeof(Vec3f) * (mesh->numTris * 3));
     for (int i = 0; i < mesh->numTris; i++) {
         Vec3i tri = mesh->tris[i];
         Vec3f triVertices[3] = {

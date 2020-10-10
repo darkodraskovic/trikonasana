@@ -5,7 +5,7 @@ SDL_Renderer *renderer = NULL;;
 
 SDL_Texture *colorBufferTexture = NULL;;
 uint32_t *colorBuffer = NULL;;
-uint32_t clearColor = 0xFF000000;
+uint32_t clearColor = 0x000000FF;
 
 int windowWidth = 800;
 int windowHeight = 600;
@@ -40,7 +40,7 @@ bool initWindow(void) {
 
 void initColorBuffer(void) {
     colorBuffer = (uint32_t*)malloc(sizeof(uint32_t) * windowWidth * windowHeight);
-    colorBufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+    colorBufferTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
                           SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
