@@ -1,5 +1,4 @@
 #include "Mesh.h"
-#include "Math/Vector.h"
 #include <stdlib.h>
 
 Vec3f cubeVertices[N_CUBE_VERTICES] = {
@@ -34,7 +33,7 @@ Vec3i cubeTris[N_CUBE_TRIS] = {
     { .x = 5, .y = 0, .z = 3 }
 };
 
-Vec3f* rotateMesh(Mesh* mesh, Vec3f rotation) {
+Vec3f* rotateMesh(Tri_Mesh* mesh, Vec3f rotation) {
     Vec3f* rotatedVertices = (Vec3f*)malloc(sizeof(Vec3f) * (mesh->numTris * 3));
     for (int i = 0; i < mesh->numTris; i++) {
         Vec3i tri = mesh->tris[i];

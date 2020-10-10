@@ -1,16 +1,16 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "Math/Vector.h"
+#include "Trini/Vector.h"
 
 typedef struct {
     unsigned numVertices;
     unsigned numTris;
     Vec3f* vertices;
     Vec3i* tris;
-} Mesh;
+} Tri_Mesh;
 
-Vec3f* rotateMesh(Mesh* mesh, Vec3f rotation);
+Vec3f* rotateMesh(Tri_Mesh* mesh, Vec3f rotation);
 
 #define N_CUBE_VERTICES 8
 extern Vec3f cubeVertices[N_CUBE_VERTICES];

@@ -3,9 +3,7 @@
 
 extern float msPerUpdate;
 
-void initApp();
-void runApp();
-void processInput(void);
+void Tri_RunApp();
 
 // callbacks
 void start(void);

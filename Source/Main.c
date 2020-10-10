@@ -2,12 +2,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "Graphics/Consts.h"
-#include "Graphics/Display.h"
-#include "Graphics/Draw.h"
-#include "Graphics/Mesh.h"
-#include "Application/Application.h"
-#include "Math/Vector.h"
+#include "Trikonasana/Consts.h"
+#include "Trikonasana/Display.h"
+#include "Trikonasana/Draw.h"
+#include "Trikonasana/Mesh.h"
+#include "Trikonasana/Application.h"
+#include "Trini/Vector.h"
 
 int fovFactor = 512;
 Vec3f cameraPosition = {.x = 0, .y = 0, .z = -5};
@@ -33,7 +33,7 @@ Vec2f projectPerspective(Vec3f point) {
 // Callbacks
 ////////////////////////////////////////////////////////////////////////////////
 Vec3f cubeRotation = {.x = 0, .y = 0, .z = 0};
-Mesh cubeMesh = {
+Tri_Mesh cubeMesh = {
     .numVertices = N_CUBE_VERTICES,
     .numTris = N_CUBE_TRIS,
     .vertices = cubeVertices,
@@ -56,15 +56,15 @@ void update(void) {
 }
 
 void draw(void) {
-    /* drawGrid(RED, 0, 0, windowWidth, windowHeight, 10); */
-    /* drawRect(30, 30, 50, 100, YELLOW); */
+    /* Tri_DrawGrid(RED, 0, 0, windowWidth, windowHeight, 10); */
+    /* Tri_DrawRect(30, 30, 50, 100, YELLOW); */
 
     Vec3f* rotated = rotateMesh(&cubeMesh, cubeRotation);
     for (int i = 0; i < cubeMesh.numTris * 3 - 3; i += 3) {
       Vec2f a = projectPerspective(rotated[i]);
       Vec2f b = projectPerspective(rotated[i + 1]);
       Vec2f c = projectPerspective(rotated[i + 2]);
-      drawTri(a.x, a.y, b.x, b.y, c.x, c.y, BLUE);
+      Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, BLUE);
     }
     free(rotated);
 }
@@ -75,6 +75,6 @@ void stop(void) {
 
 // Application
 int main(int argc, char *argv[]){
-    runApp();
+    Tri_RunApp();
     return 0;
 }

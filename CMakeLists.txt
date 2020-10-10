@@ -3,15 +3,18 @@ project (boilerplate)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+add_library(trini SHARED
+  Source/Trini/Vector.c  
+  )
+
 add_library(engine SHARED
-  Source/Application/Application.c
-  Source/Graphics/Display.c
-  Source/Graphics/Draw.c
-  Source/Graphics/Mesh.c
-  Source/Math/Vector.c  
+  Source/Trikonasana/Application.c
+  Source/Trikonasana/Display.c
+  Source/Trikonasana/Draw.c
+  Source/Trikonasana/Mesh.c
   )
 target_include_directories(engine PUBLIC Source)
-target_link_libraries(engine PUBLIC SDL2)
+target_link_libraries(engine PUBLIC SDL2 trini)
 
 add_executable(main
   Source/Main.c
