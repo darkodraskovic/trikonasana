@@ -22,4 +22,4 @@ add_executable(main
   )
 
 target_include_directories(main PUBLIC Source)
-target_link_libraries(main PRIVATE engine)
+target_link_libraries(main PRIVATE engine m)

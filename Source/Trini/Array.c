@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "Array.h"
 
-void *arrAlloc(void *array, int count, int itemSize) {
+void* arrAlloc(void* array, int count, int itemSize) {
     if (array == NULL) {
         int rawSize = (sizeof(int) * 2) + (itemSize * count);
         int *base = (int *)malloc(rawSize);
@@ -22,7 +22,7 @@ void *arrAlloc(void *array, int count, int itemSize) {
     }
 }
 
-void *arrCreate(int count, int itemSize){
+void* arrCreate(int count, int itemSize) {
     return arrAlloc(NULL, count, itemSize);
 };
 
