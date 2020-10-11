@@ -8,6 +8,7 @@
 #include "Trikonasana/Mesh.h"
 #include "Trikonasana/Application.h"
 #include "Trini/Vector.h"
+#include "Trini/Array.h"
 
 int fovFactor = 512;
 Vec3f cameraPosition = {.x = 0, .y = 0, .z = -5};
@@ -42,6 +43,55 @@ Tri_Mesh cubeMesh = {
     
 void start(void) {
     msPerUpdate = 1000 / 30;
+    int* intArr = arrCreate(5, sizeof(int));
+    /* intArr = arrAlloc(intArr, 16, sizeof(int)); */
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");    
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");        
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");        
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");        
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");        
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");    
+    
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");    
+    
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");    
+    
+    arrPush(intArr, 33);
+    printf("%d\n", arrLen(intArr));
+    printf("%d\n", arrCap(intArr));
+    printf("%s\n", "=========");    
+    
+    /* arrPush(intArr, 33); */
+    /* arrPush(intArr, 33); */
+    /* arrPush(intArr, 33); */
+    /* printf("%d", arrLen(intArr)); */
 }
 
 void input() {
@@ -61,10 +111,10 @@ void draw(void) {
 
     Vec3f* rotated = rotateMesh(&cubeMesh, cubeRotation);
     for (int i = 0; i < cubeMesh.numTris * 3 - 3; i += 3) {
-      Vec2f a = projectPerspective(rotated[i]);
-      Vec2f b = projectPerspective(rotated[i + 1]);
-      Vec2f c = projectPerspective(rotated[i + 2]);
-      Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, BLUE);
+        Vec2f a = projectPerspective(rotated[i]);
+        Vec2f b = projectPerspective(rotated[i + 1]);
+        Vec2f c = projectPerspective(rotated[i + 2]);
+        Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, BLUE);
     }
     free(rotated);
 }
