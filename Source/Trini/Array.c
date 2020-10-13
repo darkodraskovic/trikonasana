@@ -4,8 +4,7 @@
 
 void* arrAlloc(void* array, int count, int itemSize) {
     if (array == NULL) {
-        int rawSize = (sizeof(int) * 2) + (itemSize * count);
-        int *base = (int *)malloc(rawSize);
+        int *base = (int *)malloc((sizeof(int) * 2) + (itemSize * count));
         base[0] = count; // capacity
         base[1] = 0;     // occupied
         return base + 2; // logical index 0

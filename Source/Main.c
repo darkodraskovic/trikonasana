@@ -36,15 +36,16 @@ Vec2f projectPerspective(Vec3f point) {
 ////////////////////////////////////////////////////////////////////////////////
 // Callbacks
 ////////////////////////////////////////////////////////////////////////////////
-Vec3f cubeRotation = {.x = 0, .y = 0, .z = 0};
-Tri_Mesh cubeMesh;
+/* Vec3f cubeRotation = {.x = 0, .y = 0, .z = 0}; */
+Tri_Mesh* cubeMesh;
 
 void start(void) {
     msPerUpdate = 1000 / 30;
     testArray();
 
-    arrAppend(cubeMesh.vertices, cubeVertices, N_CUBE_VERTICES);
-    arrAppend(cubeMesh.tris, cubeTris, N_CUBE_TRIS);
+    cubeMesh = Tri_CreateMesh();
+    Tri_AddVertices(cubeMesh, cubeVertices, N_CUBE_VERTICES);
+    Tri_AddTris(cubeMesh, cubeTris, N_CUBE_TRIS);
 }
 
 void input() {
@@ -53,13 +54,13 @@ void input() {
 
 void update(void) {
     float rotSpeed = 0.01;
-    cubeRotation.x += rotSpeed;
-    cubeRotation.y += rotSpeed;
-    cubeRotation.z += rotSpeed;
+    cubeMesh->rotation.x += rotSpeed;
+    cubeMesh->rotation.y += rotSpeed;
+    cubeMesh->rotation.z += rotSpeed;
 }
 
 void draw(void) {
-    Vec3f* rotated = Tri_RotateMesh(&cubeMesh, cubeRotation);
+    Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
     for (int i = 0; i < arrLen(rotated) - 3; i += 3) {
         Vec2f a = projectPerspective(rotated[i]);
         Vec2f b = projectPerspective(rotated[i + 1]);
@@ -70,7 +71,7 @@ void draw(void) {
 }
 
 void stop(void) {
-    
+    Tri_DestroyMesh(cubeMesh);
 }
 
 // Application
