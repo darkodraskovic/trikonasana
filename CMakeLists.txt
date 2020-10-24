@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project (boilerplate)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(trini SHARED
@@ -10,6 +12,7 @@ add_library(trini SHARED
 
 add_library(engine SHARED
   Source/Trikonasana/Application.c
+  Source/Trikonasana/AssetLoader.c
   Source/Trikonasana/Display.c
   Source/Trikonasana/Draw.c
   Source/Trikonasana/Mesh.c

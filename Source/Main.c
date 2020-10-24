@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Consts.h"
 #include "Trikonasana/Display.h"
 #include "Trikonasana/Draw.h"
@@ -29,8 +31,7 @@ Vec2f projectPerspective(Vec3f point) {
     x = x * fovFactor + windowWidth / 2;
     float y = point.y / point.z;
     y = y * fovFactor + windowHeight / 2;
-    Vec2f projectedPoint = { .x = x, .y = y };
-    return projectedPoint;
+    return (Vec2f){ .x = x, .y = y };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,13 +40,20 @@ Vec2f projectPerspective(Vec3f point) {
 /* Vec3f cubeRotation = {.x = 0, .y = 0, .z = 0}; */
 Tri_Mesh* cubeMesh;
 
+
 void start(void) {
     msPerUpdate = 1000 / 30;
     testArray();
 
-    cubeMesh = Tri_CreateMesh();
-    Tri_AddVertices(cubeMesh, cubeVertices, N_CUBE_VERTICES);
-    Tri_AddTris(cubeMesh, cubeTris, N_CUBE_TRIS);
+    /* Tri_AddVertices(cubeMesh, cubeVertices, N_CUBE_VERTICES); */
+    /* Tri_AddTris(cubeMesh, cubeTris, N_CUBE_TRIS); */
+
+    /* Tri_Mesh* mesh = Tri_CreateMesh(); */
+
+    cubeMesh = Tri_LoadObj("assets/cube.obj");
+    if (!cubeMesh) {
+        exit(1);
+    }
 }
 
 void input() {

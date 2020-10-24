@@ -52,8 +52,3 @@ void Tri_RunApp(){
     stop();
     Tri_DestroyWindow();
 }
-
-void setFPS(int fps) {
-    fps = fps;
-    msPerUpdate = 1000.0 / fps;
-}

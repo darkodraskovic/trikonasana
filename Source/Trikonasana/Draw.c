@@ -8,7 +8,7 @@ void Tri_DrawPixel(int x, int y, uint32_t color) {
         colorBuffer[windowWidth * y + x] = color;
 }
 
-void Tri_DrawGrid(uint32_t color, int x, int y, int width, int height, int distance) {
+void Tri_DrawGrid(int x, int y, int width, int height, int distance, uint32_t color) {
     for (int j = y; j < height; j += distance) {
         for (int i = x; i < width; i += distance) {
             Tri_DrawPixel(i, j, color);
