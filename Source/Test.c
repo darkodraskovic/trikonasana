@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "Trini/Array.h"
+#include "Trini/Vector.h"
 
 void testArray() {
     int count = 100;
@@ -46,4 +47,8 @@ void testArray() {
         assert(len == i);
         assert(arrCap(floatArr) == 100);
     }
+}
+
+void testVec() {
+
 }

@@ -9,21 +9,17 @@ SDL_Texture* colorBufferTexture = NULL;;
 uint32_t* colorBuffer = NULL;;
 uint32_t clearColor = 0x000000FF;
 
-int windowWidth = 800;
-int windowHeight = 600;
+int windowWidth = 640;
+int windowHeight = 400;
+int pixelSize = 2;
 
 bool Tri_InitWindow(void) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         fprintf(stderr, "Error initializing SDL.\n");
         return false;
     };
-
-    SDL_DisplayMode display_mode;
-    SDL_GetCurrentDisplayMode(0, &display_mode);
-    windowWidth = display_mode.w * 0.5;
-    windowHeight = display_mode.h * 0.5;
   
-    window = SDL_CreateWindow(NULL, 0, 0, windowWidth, windowHeight,
+    window = SDL_CreateWindow(NULL, 0, 0, windowWidth * pixelSize, windowHeight * pixelSize,
                               SDL_WINDOW_BORDERLESS);
     if (!window) {
         fprintf(stderr, "Error creating SDL window.\n");
@@ -47,12 +43,9 @@ void Tri_InitColorBuffer(void) {
                           SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
-SDL_Rect srcRect = {0, 0, 800, 600};
-SDL_Rect dstRect = {-400, -300, 1600, 1200};
 void renderColorBuffer(void) {
     SDL_UpdateTexture(colorBufferTexture, NULL, colorBuffer, windowWidth * sizeof(uint32_t));
     SDL_RenderCopy(renderer, colorBufferTexture, NULL, NULL);
-    /* SDL_RenderCopy(renderer, colorBufferTexture, &srcRect, &dstRect); */
 }
 
 void clearColorBuffer(uint32_t color) {

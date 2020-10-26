@@ -16,7 +16,7 @@
 #include "Cube.h"
 
 int fovFactor = 512;
-Vec3f cameraPosition = {.x = 0, .y = 0, .z = -5};
+Vec3f cameraPosition = {.x = 0, .y = 0, .z = -7};
 
 Vec2f projectOrtho(Vec3f point) {
     float x = point.x * fovFactor + windowWidth / 2;
