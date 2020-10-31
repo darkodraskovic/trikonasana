@@ -6,9 +6,11 @@
 
 typedef struct {
     Vec3f* vertices;
+    Vec3f* norms;
+    Vec2f* uvs;
+    
     Vec3i* tris;
-    Vec3i* norms;
-    Vec3i* uvs;
+    
     Vec3f position;
     Vec3f rotation;
     Vec3f scale;

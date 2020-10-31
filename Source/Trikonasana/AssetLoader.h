@@ -5,5 +5,4 @@
 
 Tri_Mesh* Tri_LoadObj(char* filePath);
 
-
 #endif /* ASSETLOADER_H */

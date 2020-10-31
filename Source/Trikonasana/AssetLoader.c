@@ -12,7 +12,7 @@ char* fFmt = "f %i/%i/%i %i/%i/%i %i/%i/%i";
 int fCount = 9;
 
 Tri_Mesh* Tri_LoadObj(char* filePath) {
-    FILE *file;
+    FILE* file;
     file = fopen(filePath, "r");
     if (!file) {
         fprintf(stderr, "Error opening obj file.\n");

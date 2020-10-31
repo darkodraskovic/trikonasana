@@ -18,20 +18,28 @@
 int fovFactor = 512;
 Vec3f cameraPosition = {.x = 0, .y = 0, .z = -7};
 
-Vec2f projectOrtho(Vec3f point) {
+int Tri_CullBackface(Vec3f campPos, Vec3f a, Vec3f b, Vec3f c) {
+    Vec3f ab = vec3fSub(b, a);
+    Vec3f ac = vec3fSub(c, a);
+    Vec3f norm = vec3fCross(ab, ac);
+    Vec3f camRay = vec3fSub(campPos, a);
+    return vec3fDot(camRay, norm) < 0;
+}
+
+Vec2f Tri_ProjectOrtho(Vec3f point) {
     float x = point.x * fovFactor + windowWidth / 2;
     float y = point.y * fovFactor + windowHeight / 2;
-    Vec2f projectedPoint = { .x = x, .y = y };
+    Vec2f projectedPoint = {.x = x, .y = y};
     return projectedPoint;
 }
 
-Vec2f projectPerspective(Vec3f point) {
+Vec2f Tri_ProjectPerspective(Vec3f point) {
     point.z -= cameraPosition.z;
     float x = point.x / point.z;
     x = x * fovFactor + windowWidth / 2;
     float y = point.y / point.z;
     y = y * fovFactor + windowHeight / 2;
-    return (Vec2f){ .x = x, .y = y };
+    return (Vec2f){.x = x, .y = y};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,10 +78,16 @@ void update(void) {
 void draw(void) {
     Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
     for (int i = 0; i < arrLen(rotated) - 3; i += 3) {
-        Vec2f a = projectPerspective(rotated[i]);
-        Vec2f b = projectPerspective(rotated[i + 1]);
-        Vec2f c = projectPerspective(rotated[i + 2]);
-        Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, BLUE);
+        Vec3f a = rotated[i];
+        Vec3f b = rotated[i+1];
+        Vec3f c = rotated[i+2];
+        
+        if (Tri_CullBackface(cameraPosition, a, b, c)) continue;
+        
+        Vec2f pa = Tri_ProjectPerspective(a);
+        Vec2f pb = Tri_ProjectPerspective(b);
+        Vec2f pc = Tri_ProjectPerspective(c);
+        Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
     }
     arrDestroy(rotated);
 }

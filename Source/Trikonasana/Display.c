@@ -43,15 +43,21 @@ void Tri_InitColorBuffer(void) {
                           SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
+// Texture size is windowWidth x windowHeight
+// Render size (windowWidth x windowHeight) * pixelSize
 void renderColorBuffer(void) {
+    // colorBuffer -> colorBufferTexture
     SDL_UpdateTexture(colorBufferTexture, NULL, colorBuffer, windowWidth * sizeof(uint32_t));
-    SDL_RenderCopy(renderer, colorBufferTexture, NULL, NULL);
+    // srcrect: NULL for the entire texture; dstrect: NULL for the entire rendering target
+    // => if pixelSize > 1 then scale up texture (to "nearest" => pixelated)
+    // colorBufferTexture -> renderer 
+    SDL_RenderCopy(renderer, colorBufferTexture, NULL, NULL); 
 }
 
 void clearColorBuffer(uint32_t color) {
     for (int y = 0; y < windowHeight; y++) {
         for (int x = 0; x < windowWidth; x++) {
-            colorBuffer[(windowWidth * y) + x] = color;
+            colorBuffer[windowWidth * y + x] = color;
         }
     }
 }
@@ -60,6 +66,7 @@ void Tri_Render(void) {
     renderColorBuffer();
     clearColorBuffer(clearColor);
 
+    // renderer -> screen
     SDL_RenderPresent(renderer);
 }
 

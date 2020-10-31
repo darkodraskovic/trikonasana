@@ -21,9 +21,15 @@ Vec2f vec2fDiv(Vec2f v, float s) {
     return (Vec2f){v.x / s, v.y / s};
 }
 
-float vec2fDot(Vec2f v1, Vec2f v2) {
-    return v1.x * v2.x + v1.y * v2.y;
+float vec2fDot(Vec2f v1, Vec2f v2) { return v1.x * v2.x + v1.y * v2.y; }
+
+Vec2f* vec2fNormLocal(Vec2f* v) {
+    float len = vec2fLen(*v);
+    v->x /= len;
+    v->y /= len;
+    return v;
 }
+
 // Vec3f
 
 float vec3fLen(Vec3f v) {
@@ -54,6 +60,14 @@ Vec3f vec3fCross(Vec3f v1, Vec3f v2) {
 
 float vec3fDot(Vec3f v1, Vec3f v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+Vec3f* vec3fNormLocal(Vec3f* v) {
+    float len = vec3fLen(*v);
+    v->x /= len;
+    v->y /= len;
+    v->z /= len;
+    return v;
 }
 
 Vec3f rotateVec3fX(const Vec3f* v, float angle) {

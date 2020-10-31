@@ -4,9 +4,9 @@
 
 void* arrAlloc(void* array, int count, int itemSize) {
     if (array == NULL) {
-        int *base = (int *)malloc((sizeof(int) * 2) + (itemSize * count));
+        int *base = (int*)malloc((sizeof(int) * 2) + (itemSize * count));
         base[0] = count; // capacity
-        base[1] = 0;     // occupied
+        base[1] = 0;     // occupied (length)
         return base + 2; // logical index 0
     } else if (ARRAY_LENGTH(array) + count <= ARRAY_CAPACITY(array)) {
         return array;
@@ -14,8 +14,7 @@ void* arrAlloc(void* array, int count, int itemSize) {
         int demandedSize = ARRAY_LENGTH(array) + count;
         int doubleSize = ARRAY_CAPACITY(array) * 2;
         int capacity = demandedSize > doubleSize ? demandedSize : doubleSize;
-        int rawSize = sizeof(int) * 2 + itemSize * capacity;
-        int *base = (int *)realloc(ARRAY_RAW_DATA(array), rawSize);
+        int *base = (int*)realloc(ARRAY_RAW_DATA(array), sizeof(int)*2 + itemSize*capacity);
         base[0] = capacity;
         return base + 2;
     }
