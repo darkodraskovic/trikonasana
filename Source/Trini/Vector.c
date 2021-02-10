@@ -3,6 +3,10 @@
 
 // Vec2f
 
+void vec2fSet(Vec2f* v, float x, float y) {
+    v->x = x; v->y = y;
+}
+
 float vec2fLen(Vec2f v) {
     return sqrt(v.x * v.x + v.y * v.y);
 }
@@ -31,6 +35,10 @@ Vec2f* vec2fNormLocal(Vec2f* v) {
 }
 
 // Vec3f
+
+void vec3fSet(Vec3f* v, float x, float y, float z) {
+    v->x = x; v->y = y; v->z = z;
+}
 
 float vec3fLen(Vec3f v) {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);

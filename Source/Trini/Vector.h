@@ -1,8 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#define VEC3_ZERO(vec) vec.x = 0; vec.y = 0; vec.z = 0;
-
 typedef struct {
     int x;
     int y;
@@ -25,6 +23,7 @@ typedef struct {
     float z;
 } Vec3f;
 
+void vec2fSet(Vec2f* v, float x, float y);
 float vec2fLen(Vec2f v);
 Vec2f vec2fAdd(Vec2f v1, Vec2f v2);
 Vec2f vec2fSub(Vec2f v1, Vec2f v2);
@@ -33,6 +32,7 @@ Vec2f vec2fDiv(Vec2f v, float s);
 float vec2fDot(Vec2f v1, Vec2f v2);
 Vec2f* vec2fNormLocal(Vec2f* v);
 
+void vec3fSet(Vec3f* v, float x, float y, float z);
 float vec3fLen(Vec3f v);
 Vec3f vec3fAdd(Vec3f v1, Vec3f v2);
 Vec3f vec3fSub(Vec3f v1, Vec3f v2);

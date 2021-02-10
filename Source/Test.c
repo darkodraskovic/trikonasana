@@ -14,17 +14,17 @@ void testArray() {
     for (int i = 1; i < count; ++i) {
         arrPush(intArr, i);
         assert(intArr[i-1] == i);
-        int len = arrLen(intArr);
+        int len = arrSize(intArr);
         assert(len == i);
         int cap = pow(2, ceil(log2(i)));
         assert(arrCap(intArr) == cap);
     }
     
     // test arrAppend
-    int len = arrLen(intArr);    
+    int len = arrSize(intArr);    
     arrAppend(intArr, intArr, len);
     len *= 2;
-    assert(arrLen(intArr) == len);
+    assert(arrSize(intArr) == len);
     assert(arrCap(intArr) >= len);
     for (int i = 0; i < len; i++) {
         int j = (i < len/2 ? i : (i-len/2)) + 1;
@@ -33,17 +33,17 @@ void testArray() {
     
     int* intArr2 = NULL;
     arrAppend(intArr2, intArr, len);
-    assert(arrLen(intArr2) == len);
+    assert(arrSize(intArr2) == len);
     assert(arrCap(intArr2) == len);
 
     // test arrCreate
     int* floatArr = arrCreate(count, sizeof(float));
-    assert(arrLen(floatArr) == 0);
+    assert(arrSize(floatArr) == 0);
     assert(arrCap(floatArr) == count);
     for (int i = 1; i < count; ++i) {
         arrPush(floatArr, i);
         assert(floatArr[i-1] == i);
-        int len = arrLen(floatArr);
+        int len = arrSize(floatArr);
         assert(len == i);
         assert(arrCap(floatArr) == 100);
     }
