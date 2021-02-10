@@ -6,7 +6,7 @@ A software CPU based 3D renderer made in pure C and SDL.
 
 Install [SDL2 library](https://www.libsdl.org/). For ode completion, compile errors, go-to-definition, etc. install [clangd](https://clangd.llvm.org/installation.html).
 
-## Configure and run
+## Configure && build
 
 Create `build` directory in the root directory, `cd` to `build` directory and run
 
@@ -17,10 +17,20 @@ cmake ..
 Staying in `build` directory, type
 
 ```
-make && ./main
+make
 ```
 
 to compile and run the program.
+
+## Run
+
+Create `bin` directory in the root directory. `cd` to `bin/` and run
+
+```
+./main
+```
+
+to run the program.
 
 ### Clangd
 
