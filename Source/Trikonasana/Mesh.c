@@ -8,15 +8,19 @@
 Tri_Mesh* Tri_CreateMesh() {
     Tri_Mesh* mesh = malloc(sizeof(Tri_Mesh));
     mesh->vertices = NULL;
+    mesh->norms = NULL;
     mesh->tris = NULL;
-    VEC3_ZERO(mesh->position);
-    VEC3_ZERO(mesh->rotation);
-    VEC3_ZERO(mesh->scale);
+    mesh->uvs = NULL;
+    vec3fSet(&mesh->position, 0, 0, 0);
+    vec3fSet(&mesh->rotation, 0, 0, 0);
+    vec3fSet(&mesh->scale, 1, 1, 1);
     return mesh;
 }
 
 void Tri_DestroyMesh(Tri_Mesh* mesh) {
     arrDestroy(mesh->vertices);
+    arrDestroy(mesh->norms);
+    arrDestroy(mesh->uvs);
     arrDestroy(mesh->tris);
     free(mesh);
 }
@@ -37,8 +41,8 @@ void Tri_AddTris(Tri_Mesh *mesh, Vec3i* tris, int count) {
 }
 
 Vec3f* Tri_RotateMesh(Tri_Mesh* mesh, Vec3f rotation) {
-    Vec3f* rotatedVertices = arrCreate(arrLen(mesh->vertices), sizeof(Vec3f));
-    for (int i = 0; i < arrLen(mesh->tris); i++) {
+    Vec3f* rotatedVertices = arrCreate(arrSize(mesh->tris)*3, sizeof(Vec3f));
+    for (int i = 0; i < arrSize(mesh->tris); i++) {
         Vec3i triIdx = mesh->tris[i];
         Vec3f triVerts[3] = {
             mesh->vertices[triIdx.x],

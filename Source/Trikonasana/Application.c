@@ -7,11 +7,10 @@
 bool running = false;
 
 Uint32 previousFrame = 0;
-float msPerUpdate = 1000 / 60;
+float msPerUpdate = 1000.f / 60;
 
 void initApp() {
-    running = Tri_InitWindow();
-    Tri_InitColorBuffer();
+    running = Tri_InitDisplay();
 }
 
 void processInput(void) {
@@ -50,5 +49,5 @@ void Tri_RunApp(){
     }
 
     stop();
-    Tri_DestroyWindow();
+    Tri_DestroyDisplay();
 }

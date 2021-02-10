@@ -5,7 +5,7 @@
 
 void Tri_DrawPixel(int x, int y, uint32_t color) {
     if (x > -1 && x < windowWidth && y > -1 && y < windowHeight)
-        colorBuffer[windowWidth * y + x] = color;
+        renderBuffer[windowWidth * y + x] = color;
 }
 
 void Tri_DrawGrid(int x, int y, int width, int height, int distance, uint32_t color) {

@@ -77,7 +77,7 @@ void update(void) {
 
 void draw(void) {
     Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
-    for (int i = 0; i < arrLen(rotated) - 3; i += 3) {
+    for (int i = 0; i < arrSize(rotated) - 3; i += 3) {
         Vec3f a = rotated[i];
         Vec3f b = rotated[i+1];
         Vec3f c = rotated[i+2];

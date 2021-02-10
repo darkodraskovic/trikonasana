@@ -6,16 +6,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-extern uint32_t *colorBuffer;
-extern uint32_t clearColor;
+extern uint32_t *renderBuffer;
 
 extern int windowWidth;
 extern int windowHeight;
+extern int pixelSize;
 
-bool Tri_InitWindow(void);
+bool Tri_InitDisplay(void);
 void Tri_InitColorBuffer(void);
 
 void Tri_Render(void);
-void Tri_DestroyWindow(void);
+void Tri_DestroyDisplay(void);
+
+void Tri_SetClearColor(uint32_t color);
 
 #endif /* DISPLAY_H */
