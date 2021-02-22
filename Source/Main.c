@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Consts.h"
 #include "Trikonasana/Display.h"
@@ -76,20 +71,23 @@ void update(void) {
 }
 
 void draw(void) {
-    Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
-    for (int i = 0; i < arrSize(rotated) - 3; i += 3) {
-        Vec3f a = rotated[i];
-        Vec3f b = rotated[i+1];
-        Vec3f c = rotated[i+2];
+    /* Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation); */
+    /* for (int i = 0; i < arrSize(rotated) - 3; i += 3) { */
+    /*     Vec3f a = rotated[i]; */
+    /*     Vec3f b = rotated[i+1]; */
+    /*     Vec3f c = rotated[i+2]; */
         
-        if (Tri_CullBackface(cameraPosition, a, b, c)) continue;
+    /*     if (Tri_CullBackface(cameraPosition, a, b, c)) continue; */
         
-        Vec2f pa = Tri_ProjectPerspective(a);
-        Vec2f pb = Tri_ProjectPerspective(b);
-        Vec2f pc = Tri_ProjectPerspective(c);
-        Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
-    }
-    arrDestroy(rotated);
+    /*     Vec2f pa = Tri_ProjectPerspective(a); */
+    /*     Vec2f pb = Tri_ProjectPerspective(b); */
+    /*     Vec2f pc = Tri_ProjectPerspective(c); */
+    /*     Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE); */
+    /* } */
+    /* arrDestroy(rotated); */
+    
+    Tri_DrawTri(40, 80, 200, 20, 300, 300, RED);
+    Tri_DrawTriSolid(40, 80, 200, 20, 300, 300, BLUE);
 }
 
 void stop(void) {

@@ -3,12 +3,11 @@
 #include "Array.h"
 
 #define ARRAY_RAW_DATA(array) ((int*)(array) - 2)
-#define ARRAY_CAPACITY(array) (((int*)(array))[-2])
-#define ARRAY_SIZE(array) (((int*)(array))[-1])
+#define ARRAY_CAPACITY(array) ((int*)array)[-2]
 
 void* arrAlloc(void* array, int count, int itemSize) {
     if (array == NULL) {
-        int *base = (int*)malloc((sizeof(int) * 2) + (itemSize * count));
+        int *base = (int*)malloc(sizeof(int)*2 + itemSize*count);
         base[0] = count; // capacity
         base[1] = 0;     // size
         return base + 2; // logical index 0
@@ -24,8 +23,8 @@ void* arrAlloc(void* array, int count, int itemSize) {
     }
 }
 
-void* arrCreate(int count, int itemSize) {
-    return arrAlloc(NULL, count, itemSize);
+void* arrCreate(int capacity, int itemSize) {
+    return arrAlloc(NULL, capacity, itemSize);
 };
 
 int arrSize(void* array) {

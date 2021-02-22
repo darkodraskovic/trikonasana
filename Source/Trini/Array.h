@@ -3,23 +3,25 @@
 
 #include <string.h>
 
+#define ARRAY_SIZE(array) ((int*)array)[-1]
+
 #define arrPush(array, value) do {                      \
         array = arrAlloc(array, 1, sizeof(value));      \
-        array[((int*)(array))[-1]] = value;             \
-        ((int*)(array))[-1]++;                          \
+        array[ARRAY_SIZE(array)] = value;               \
+        ARRAY_SIZE(array)++;                            \
     } while(0)
 
-#define arrAppend(array, cArray, count) do {                             \
+#define arrAppend(array, cArray, count) do {                            \
         array = arrAlloc(array, count, sizeof(*cArray));                \
-        memcpy(array + ((int*)(array))[-1], cArray, sizeof(*cArray) * count); \
-        ((int*)(array))[-1] += count;                                  \
+        memcpy(array + ARRAY_SIZE(array), cArray, sizeof(*cArray) * count); \
+        ARRAY_SIZE(array) += count;                                     \
     } while(0)
+
+void* arrCreate(int count, int itemSize);
+void arrDestroy(void* array);
 
 void* arrAlloc(void* array, int count, int itemSize);
 int arrSize(void* array);
 int arrCap(void *array);
-
-void* arrCreate(int count, int itemSize);
-void arrDestroy(void* array);
 
 #endif
