@@ -1,7 +1,5 @@
 #include "Draw.h"
 #include "Display.h"
-#include <stdint.h>
-#include <stdlib.h>
 
 void swapInt(int* n1, int* n2) {
     int tmp = *n1;
@@ -9,26 +7,21 @@ void swapInt(int* n1, int* n2) {
     *n2 = tmp;
 }
 
+// PIXEL
+
 void Tri_DrawPixel(int x, int y, uint32_t color) {
     if (x > -1 && x < windowWidth && y > -1 && y < windowHeight)
         renderBuffer[windowWidth * y + x] = color;
 }
 
-void Tri_DrawGrid(int x, int y, int width, int height, int distance, uint32_t color) {
-    for (int j = y; j < height; j += distance) {
-        for (int i = x; i < width; i += distance) {
-            Tri_DrawPixel(i, j, color);
-        }
-    }
-};
+// LINE
 
-void Tri_DrawRect(int x, int y, int width, int height, uint32_t color) {
-    for (int j = y; j < y + height; j ++) {
-        for (int i = x; i < x + width; i ++) {
-            Tri_DrawPixel(i, j, color);
-        }
-    }
-};
+void Tri_DrawLineHorizontal(int x0, int y0, int x1, uint32_t color) {
+    if (x0 > x1) swapInt(&x0, &x1);
+    int idx = windowWidth * y0 + x0;
+    int end = windowWidth * y0 + x1;
+    while (idx <= end) renderBuffer[idx++] = color;
+}
 
 void Tri_DrawLine(int x0, int y0, int x1, int y1, uint32_t color) {
     int deltaX = x1 - x0;
@@ -48,19 +41,13 @@ void Tri_DrawLine(int x0, int y0, int x1, int y1, uint32_t color) {
     }
 }
 
-void Tri_DrawLineHorizontal(int x0, int y0, int x1, uint32_t color) {
-    if (x0 > x1) swapInt(&x0, &x1);
-    int idx = windowWidth * y0 + x0;
-    int end = windowWidth * y0 + x1;
-    while (idx <= end) renderBuffer[idx++] = color;
-}
-    
+// TRIANGLE
+
 void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color) {
     Tri_DrawLine(x0, y0, x1, y1, color);
     Tri_DrawLine(x1, y1, x2, y2, color);
     Tri_DrawLine(x2, y2, x0, y0, color);
 }
-
 
 //      (x0,y0)
 //        /\
@@ -105,9 +92,33 @@ void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t c
         swapInt(&x0, &x1);
     }
 
-    int My = y1;
-    int Mx = ((float)((x2 - x0) * (y1 - y0))) / (float)(y2 - y0) + x0;
-
-    drawFlatBottom(x0, y0, x1, y1, Mx, My, color);
-    drawFlatTop(x1, y1, Mx, My, x2, y2, color);
+    // prevent division by 0 and redundant draw
+    if (y1 == y2) {
+        drawFlatBottom(x0, y0, x1, y1, x2, y2, color);
+    } else if (y0 == y1) {
+        drawFlatTop(x0, y0, x1, y1, x2, y2, color);
+    } else {
+        int Mx = ((float)((x2 - x0) * (y1 - y0))) / (float)(y2 - y0) + x0;
+        // My = y1
+        drawFlatBottom(x0, y0, x1, y1, Mx, y1, color);
+        drawFlatTop(x1, y1, Mx, y1, x2, y2, color);
+    }
 }
+
+// RECT
+
+void Tri_DrawGrid(int x, int y, int width, int height, int distance, uint32_t color) {
+    for (int j = y; j < height; j += distance) {
+        for (int i = x; i < width; i += distance) {
+            Tri_DrawPixel(i, j, color);
+        }
+    }
+};
+
+void Tri_DrawRect(int x, int y, int width, int height, uint32_t color) {
+    for (int j = y; j < y + height; j ++) {
+        for (int i = x; i < x + width; i ++) {
+            Tri_DrawPixel(i, j, color);
+        }
+    }
+};

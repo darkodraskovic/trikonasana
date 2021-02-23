@@ -15,6 +15,7 @@ add_library(engine SHARED
   Source/Trikonasana/AssetLoader.c
   Source/Trikonasana/Display.c
   Source/Trikonasana/Draw.c
+  Source/Trikonasana/Render.c
   Source/Trikonasana/Mesh.c
   )
 target_include_directories(engine PUBLIC Source)
