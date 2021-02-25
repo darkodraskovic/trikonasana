@@ -1,7 +1,4 @@
 #include "Display.h"
-#include <SDL2/SDL_rect.h>
-#include <stdint.h>
-#include <string.h>
 
 void initBuffers();
 
@@ -9,8 +6,8 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;;
 SDL_Texture *renderTexture = NULL;
 
-uint32_t* renderBuffer = NULL;;
-uint32_t* clearBuffer = NULL;;
+color_t* renderBuffer = NULL;;
+color_t* clearBuffer = NULL;;
 
 int windowWidth = 640;
 int windowHeight = 400;
@@ -45,18 +42,18 @@ bool Tri_InitDisplay() {
 
 
 void initBuffers() {
-    bufferSize = windowWidth * windowHeight * sizeof(uint32_t);
-    pitch = windowWidth * sizeof(uint32_t);
+    bufferSize = windowWidth * windowHeight * sizeof(color_t);
+    pitch = windowWidth * sizeof(color_t);
 
-    renderBuffer = (uint32_t*)malloc(sizeof(uint32_t) * windowWidth * windowHeight);
-    clearBuffer = (uint32_t*)malloc(sizeof(uint32_t) * windowWidth * windowHeight);
+    renderBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
+    clearBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
     Tri_SetClearColor(0x000000FF);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
     renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
                           SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
-void Tri_SetClearColor(uint32_t color) {
+void Tri_SetClearColor(color_t color) {
     int i = 0;
     while (i < windowWidth * windowHeight) clearBuffer[i++] = color;
 }

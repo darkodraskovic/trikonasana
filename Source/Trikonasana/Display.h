@@ -1,12 +1,13 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_video.h>
 #include <stdbool.h>
-#include <stdint.h>
 
-extern uint32_t *renderBuffer;
+#include <SDL2/SDL.h>
+
+#include "Typedef.h"
+
+extern color_t *renderBuffer;
 
 extern int windowWidth;
 extern int windowHeight;
@@ -18,6 +19,6 @@ void Tri_InitColorBuffer(void);
 void Tri_Render(void);
 void Tri_DestroyDisplay(void);
 
-void Tri_SetClearColor(uint32_t color);
+void Tri_SetClearColor(color_t color);
 
 #endif /* DISPLAY_H */

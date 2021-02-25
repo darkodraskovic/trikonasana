@@ -72,9 +72,9 @@ void draw(void) {
         Vec2f pb = Tri_ProjectPerspective(camPos, b);
         Vec2f pc = Tri_ProjectPerspective(camPos, c);
 
-        if (TRI_GetRenderMode(RM_SOLID)) Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
-        if (TRI_GetRenderMode(RM_WIRE)) Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, GREEN);
-        if (TRI_GetRenderMode(RM_POINT)) {
+        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
+        if (TRI_renderMask & RM_WIRE) Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, GREEN);
+        if (TRI_renderMask & RM_POINT) {
             /* Tri_DrawPixel(pa.x, pa.y, RED); */
             /* Tri_DrawPixel(pb.x, pb.y, RED); */
             /* Tri_DrawPixel(pc.x, pc.y, RED); */

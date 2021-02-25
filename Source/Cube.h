@@ -1,3 +1,6 @@
+#ifndef CUBE_H
+#define CUBE_H
+
 #include "Trini/Vector.h"
 
 #define N_CUBE_VERTICES 8
@@ -34,3 +37,5 @@ Vec3i cubeTris[N_CUBE_TRIS] = {
     { .x = 5, .y = 7, .z = 0 },
     { .x = 5, .y = 0, .z = 3 }
 };
+
+#endif /* CUBE_H */

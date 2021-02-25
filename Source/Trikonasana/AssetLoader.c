@@ -1,7 +1,7 @@
 #include <stdio.h>
+#include <string.h>
+
 #include "AssetLoader.h"
-#include "Trikonasana/Mesh.h"
-#include "Trini/Vector.h"
 
 #define LINE_LEN 256
 
@@ -39,8 +39,8 @@ Tri_Mesh* Tri_LoadObj(char* filePath) {
             Tri_AddTri(mesh, tri);
         }
     }
-    
+
     fclose(file);
-    
+
     return mesh;
 }

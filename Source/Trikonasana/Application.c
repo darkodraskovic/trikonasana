@@ -1,8 +1,5 @@
 #include "Application.h"
 #include "Display.h"
-#include <SDL2/SDL_stdinc.h>
-#include <SDL2/SDL_timer.h>
-#include <stdio.h>
 
 bool running = false;
 

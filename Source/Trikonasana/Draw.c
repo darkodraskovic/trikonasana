@@ -1,5 +1,4 @@
 #include "Draw.h"
-#include "Display.h"
 
 void swapInt(int* n1, int* n2) {
     int tmp = *n1;
@@ -9,21 +8,21 @@ void swapInt(int* n1, int* n2) {
 
 // PIXEL
 
-void Tri_DrawPixel(int x, int y, uint32_t color) {
+void Tri_DrawPixel(int x, int y, color_t color) {
     if (x > -1 && x < windowWidth && y > -1 && y < windowHeight)
         renderBuffer[windowWidth * y + x] = color;
 }
 
 // LINE
 
-void Tri_DrawLineHorizontal(int x0, int y0, int x1, uint32_t color) {
+void Tri_DrawLineHorizontal(int x0, int y0, int x1, color_t color) {
     if (x0 > x1) swapInt(&x0, &x1);
     int idx = windowWidth * y0 + x0;
     int end = windowWidth * y0 + x1;
     while (idx <= end) renderBuffer[idx++] = color;
 }
 
-void Tri_DrawLine(int x0, int y0, int x1, int y1, uint32_t color) {
+void Tri_DrawLine(int x0, int y0, int x1, int y1, color_t color) {
     int deltaX = x1 - x0;
     int deltaY = y1 - y0;
 
@@ -43,7 +42,7 @@ void Tri_DrawLine(int x0, int y0, int x1, int y1, uint32_t color) {
 
 // TRIANGLE
 
-void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color) {
+void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) {
     Tri_DrawLine(x0, y0, x1, y1, color);
     Tri_DrawLine(x1, y1, x2, y2, color);
     Tri_DrawLine(x2, y2, x0, y0, color);
@@ -53,7 +52,7 @@ void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color)
 //        /\
 //       /  \
 // (x1,y1)--(Mx,My)
-void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, uint32_t color) {
+void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, color_t color) {
     float m1 = (float)(x1 - x0) / (y1 - y0); // reciprocal slope (inverse)
     float m2 = (float)(Mx - x0) / (My - y0);
     float xStart = x0, xEnd = x0;
@@ -67,7 +66,7 @@ void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, uint32_t col
 //      \  /
 //       \/
 //    (x2,y2)
-void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2, uint32_t color) {
+void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2, color_t color) {
     float m1 = (float)(x1 - x2) / (y2 - y1); // reciprocal slope (inverse)
     float m2 = (float)(Mx - x2) / (y2 - My);
     float xStart = x2, xEnd = x2;
@@ -77,7 +76,7 @@ void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2, uint32_t color)
     }
 }
 
-void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color) {
+void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) {
     // sort the vertices by y-coordinate ascending (y0 < y1 < y2)
     if (y0 > y1) {
         swapInt(&y0, &y1);
@@ -107,7 +106,7 @@ void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t c
 
 // RECT
 
-void Tri_DrawGrid(int x, int y, int width, int height, int distance, uint32_t color) {
+void Tri_DrawGrid(int x, int y, int width, int height, int distance, color_t color) {
     for (int j = y; j < height; j += distance) {
         for (int i = x; i < width; i += distance) {
             Tri_DrawPixel(i, j, color);
@@ -115,7 +114,7 @@ void Tri_DrawGrid(int x, int y, int width, int height, int distance, uint32_t co
     }
 };
 
-void Tri_DrawRect(int x, int y, int width, int height, uint32_t color) {
+void Tri_DrawRect(int x, int y, int width, int height, color_t color) {
     for (int j = y; j < y + height; j ++) {
         for (int i = x; i < x + width; i ++) {
             Tri_DrawPixel(i, j, color);

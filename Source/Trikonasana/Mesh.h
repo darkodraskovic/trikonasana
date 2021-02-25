@@ -1,7 +1,6 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "Trini/Array.h"
 #include "Trini/Vector.h"
 
 typedef struct {
