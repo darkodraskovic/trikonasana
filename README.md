@@ -30,7 +30,11 @@ Create `bin` directory in the root directory. `cd` to `bin/` and run
 ./main
 ```
 
-to run the program.
+If you have created `bin`, you can `cd` to `build` and type
+
+```
+make && cd ../bin && ./main
+```
 
 ### Clangd
 

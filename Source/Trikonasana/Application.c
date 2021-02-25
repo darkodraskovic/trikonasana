@@ -6,6 +6,8 @@
 
 bool running = false;
 
+SDL_Event TRI_event;
+    
 Uint32 previousFrame = 0;
 float msPerUpdate = 1000.f / 60;
 
@@ -14,18 +16,17 @@ void initApp() {
 }
 
 void processInput(void) {
-    SDL_Event event;
-    SDL_PollEvent(&event);
+    SDL_PollEvent(&TRI_event);
 
-    switch (event.type) {
+    switch (TRI_event.type) {
     case SDL_QUIT:
         running = false;
         break;
     case SDL_KEYDOWN:
-        if (event.key.keysym.sym == SDLK_ESCAPE)
+        if (TRI_event.key.keysym.sym == SDLK_ESCAPE)
             running = false;
         break;
-    }    
+    }
 }
 
 void Tri_RunApp(){

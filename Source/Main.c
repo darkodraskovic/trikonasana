@@ -1,3 +1,7 @@
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
+#include <stdio.h>
+
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Consts.h"
 #include "Trikonasana/Draw.h"
@@ -26,7 +30,24 @@ void start(void) {
 }
 
 void input() {
-    
+
+    switch (TRI_event.type) {
+    case SDL_KEYDOWN:
+        if (TRI_event.key.keysym.sym == SDLK_1) {
+            TRI_ToggleRenderMode(RM_POINT);
+        }
+        if (TRI_event.key.keysym.sym == SDLK_2) {
+            TRI_ToggleRenderMode(RM_WIRE);
+        }
+        if (TRI_event.key.keysym.sym == SDLK_3) {
+            TRI_ToggleRenderMode(RM_SOLID);
+        }
+        if (TRI_event.key.keysym.sym == SDLK_4) {
+            if (TRI_cullMode == CM_NONE) TRI_cullMode = CM_BACK;
+            else TRI_cullMode = CM_NONE;
+        }
+        break;
+    }
 }
 
 void update(void) {
@@ -42,19 +63,29 @@ void draw(void) {
         Vec3f a = rotated[i];
         Vec3f b = rotated[i+1];
         Vec3f c = rotated[i+2];
-        
-        if (Tri_CullBackface(camPos, a, b, c)) continue;
+
+        if (TRI_cullMode == CM_BACK) {
+            if (Tri_CullBackface(camPos, a, b, c)) continue;            
+        }
         
         Vec2f pa = Tri_ProjectPerspective(camPos, a);
         Vec2f pb = Tri_ProjectPerspective(camPos, b);
         Vec2f pc = Tri_ProjectPerspective(camPos, c);
-        Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
-        Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, GREEN);
+
+        if (TRI_GetRenderMode(RM_SOLID)) Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
+        if (TRI_GetRenderMode(RM_WIRE)) Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, GREEN);
+        if (TRI_GetRenderMode(RM_POINT)) {
+            /* Tri_DrawPixel(pa.x, pa.y, RED); */
+            /* Tri_DrawPixel(pb.x, pb.y, RED); */
+            /* Tri_DrawPixel(pc.x, pc.y, RED); */
+            int halfSize = 1;
+            int size = 2 * halfSize;
+            Tri_DrawRect(pa.x-halfSize, pa.y-halfSize, size, size, RED);
+            Tri_DrawRect(pb.x-halfSize, pb.y-halfSize, size, size, RED);
+            Tri_DrawRect(pc.x-halfSize, pc.y-halfSize, size, size, RED);
+        }
     }
     arrDestroy(rotated);
-    
-    /* Tri_DrawTri(40, 80, 200, 20, 300, 300, RED); */
-    /* Tri_DrawTriSolid(40, 80, 200, 20, 300, 300, BLUE); */
 }
 
 void stop(void) {
