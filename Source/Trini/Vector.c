@@ -1,5 +1,24 @@
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "Vector.h"
+
+// Vec2i
+
+char* vec2iToString(Vec2i* v) {
+    char* str = malloc(sizeof(char) * 32);
+    sprintf(str, "%d %d", v->x, v->y);
+    return str;
+}
+
+
+// Vec2i
+
+char* vec3iToString(Vec3i* v) {
+    char* str = malloc(sizeof(char) * 32);
+    sprintf(str, "%d %d %d", v->x, v->y, v->z);
+    return str;
+}
 
 // Vec2f
 
@@ -32,6 +51,12 @@ Vec2f* vec2fNormLocal(Vec2f* v) {
     v->x /= len;
     v->y /= len;
     return v;
+}
+
+char* vec2fToString(Vec2f* v) {
+    char* str = malloc(sizeof(char) * 32);
+    sprintf(str, "%.2f %.2f", v->x, v->y);
+    return str;
 }
 
 // Vec3f
@@ -76,6 +101,12 @@ Vec3f* vec3fNormLocal(Vec3f* v) {
     v->y /= len;
     v->z /= len;
     return v;
+}
+
+char* vec3fToString(Vec3f* v) {
+    char* str = malloc(sizeof(char) * 32);
+    sprintf(str, "%.2f %.2f %.2f", v->x, v->y, v->z);
+    return str;
 }
 
 Vec3f rotateVec3fX(const Vec3f* v, float angle) {

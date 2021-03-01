@@ -1,6 +1,9 @@
+#include <stdio.h>
+#include <time.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
-#include <stdio.h>
+#include <SDL2/SDL_log.h>
 
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Consts.h"
@@ -10,6 +13,9 @@
 
 #include "Test.c"
 #include "Cube.h"
+#include "Trikonasana/Typedef.h"
+#include "Trini/Array.h"
+#include "Trini/Vector.h"
 
 Vec3f camPos = {.x = 0, .y = 0, .z = -7};
 Tri_Mesh* cubeMesh;
@@ -23,10 +29,41 @@ void start(void) {
 
     /* Tri_Mesh* mesh = Tri_CreateMesh(); */
 
-    cubeMesh = Tri_LoadObj("assets/cube.obj");
+    /* cubeMesh = Tri_LoadObj("assets/cube.obj"); */
+    cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj");
     if (!cubeMesh) {
         exit(1);
     }
+    /* for (int i = 0; i < arrSize(cubeMesh->vertices); ++i) { */
+    /*     /\* SDL_Log("%s", vec3ToString(&cubeMesh->vertices[i])); *\/ */
+    /* } */
+    /* for (int i = 0; i < arrSize(cubeMesh->normals); ++i) { */
+    /*     SDL_Log("%s", vec3ToString(&cubeMesh->normals[i])); */
+    /* } */
+    /* for (int i = 0; i < arrSize(cubeMesh->uvs); ++i) { */
+    /*     SDL_Log("%s", vec2fToString(&cubeMesh->uvs[i])); */
+    /* } */
+    /* for (int i = 0; i < arrSize(cubeMesh->vTris); ++i) { */
+    /*     SDL_Log("%s", vec3iToString(&cubeMesh->vTris[i])); */
+    /* } */
+    /* for (int i = 0; i < arrSize(cubeMesh->nTris); ++i) { */
+    /*     SDL_Log("%s", vec3iToString(&cubeMesh->nTris[i])); */
+    /* } */
+    /* for (int i = 0; i < arrSize(cubeMesh->uvTris); ++i) { */
+    /*     SDL_Log("%s", vec3iToString(&cubeMesh->uvTris[i])); */
+    /* } */
+
+    srand(time(NULL));   // Initialization, should only be called once.
+
+    for (int i = 0; i < arrSize(cubeMesh->vTris); i++) {
+        int r = rand() % WHITE + 0x000000FF;
+        arrPush(cubeMesh->triColors, r);
+    }
+    /* for (int i = 0; i < arrSize(cubeMesh->colors); ++i) { */
+    /*     SDL_Log("%d", cubeMesh->colors[i]); */
+    /* } */
+
+    
 }
 
 void input() {
@@ -59,7 +96,7 @@ void update(void) {
 
 void draw(void) {
     Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
-    for (int i = 0; i < arrSize(rotated) - 3; i += 3) {
+    for (int i = 0; i < arrSize(rotated); i += 3) {
         Vec3f a = rotated[i];
         Vec3f b = rotated[i+1];
         Vec3f c = rotated[i+2];
@@ -72,7 +109,8 @@ void draw(void) {
         Vec2f pb = Tri_ProjectPerspective(camPos, b);
         Vec2f pc = Tri_ProjectPerspective(camPos, c);
 
-        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, BLUE);
+        color_t color = cubeMesh->triColors[i/3];
+        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, color);
         if (TRI_renderMask & RM_WIRE) Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, GREEN);
         if (TRI_renderMask & RM_POINT) {
             /* Tri_DrawPixel(pa.x, pa.y, RED); */
