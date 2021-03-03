@@ -8,6 +8,7 @@
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Consts.h"
 #include "Trikonasana/Draw.h"
+#include "Trikonasana/Mesh.h"
 #include "Trikonasana/Render.h"
 #include "Trikonasana/Application.h"
 
@@ -58,6 +59,7 @@ void start(void) {
     for (int i = 0; i < arrSize(cubeMesh->vTris); i++) {
         int r = rand() % WHITE + 0x000000FF;
         arrPush(cubeMesh->triColors, r);
+        /* arrPush(cubeMesh->triColors, RED); */
     }
     /* for (int i = 0; i < arrSize(cubeMesh->colors); ++i) { */
     /*     SDL_Log("%d", cubeMesh->colors[i]); */
@@ -96,6 +98,9 @@ void update(void) {
 
 void draw(void) {
     Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
+
+    Tri_Face* faces = NULL;
+
     for (int i = 0; i < arrSize(rotated); i += 3) {
         Vec3f a = rotated[i];
         Vec3f b = rotated[i+1];
@@ -104,26 +109,38 @@ void draw(void) {
         if (TRI_cullMode == CM_BACK) {
             if (Tri_CullBackface(camPos, a, b, c)) continue;            
         }
-        
-        Vec2f pa = Tri_ProjectPerspective(camPos, a);
-        Vec2f pb = Tri_ProjectPerspective(camPos, b);
-        Vec2f pc = Tri_ProjectPerspective(camPos, c);
 
+        float depth = (a.z + b.z + c.z) / 3.0;
         color_t color = cubeMesh->triColors[i/3];
-        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, color);
-        if (TRI_renderMask & RM_WIRE) Tri_DrawTri(pa.x, pa.y, pb.x, pb.y, pc.x, pc.y, GREEN);
+        arrPush(faces, ((Tri_Face){a, b, c, color, depth}));
+    }
+
+    // sort ascending
+    Tri_sortFaces(faces, 0, arrSize(faces)-1);
+
+    // cam is looking in the positive z direction
+    for (int i = arrSize(faces)-1; i >= 0; i--) {
+        Tri_Face* face = &faces[i];
+        Vec2f a = Tri_ProjectPerspective(camPos, face->vertices[0]);
+        Vec2f b = Tri_ProjectPerspective(camPos, face->vertices[1]);
+        Vec2f c = Tri_ProjectPerspective(camPos, face->vertices[2]);
+
+        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
+        if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
         if (TRI_renderMask & RM_POINT) {
             /* Tri_DrawPixel(pa.x, pa.y, RED); */
             /* Tri_DrawPixel(pb.x, pb.y, RED); */
             /* Tri_DrawPixel(pc.x, pc.y, RED); */
             int halfSize = 1;
             int size = 2 * halfSize;
-            Tri_DrawRect(pa.x-halfSize, pa.y-halfSize, size, size, RED);
-            Tri_DrawRect(pb.x-halfSize, pb.y-halfSize, size, size, RED);
-            Tri_DrawRect(pc.x-halfSize, pc.y-halfSize, size, size, RED);
-        }
+            Tri_DrawRect(a.x-halfSize, a.y-halfSize, size, size, RED);
+            Tri_DrawRect(b.x-halfSize, b.y-halfSize, size, size, RED);
+            Tri_DrawRect(c.x-halfSize, c.y-halfSize, size, size, RED);
+        }        
     }
+    
     arrDestroy(rotated);
+    arrDestroy(faces);
 }
 
 void stop(void) {

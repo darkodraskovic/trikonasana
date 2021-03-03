@@ -20,10 +20,16 @@ typedef struct {
     Vec3f scale;
 } Tri_Mesh;
 
+typedef struct {
+    Vec3f vertices[3];
+    color_t color;
+    float depth;
+} Tri_Face;
 
 Tri_Mesh *Tri_CreateMesh();
 void Tri_DestroyMesh(Tri_Mesh *mesh);
 
-Vec3f* Tri_RotateMesh(Tri_Mesh* mesh, Vec3f rotation);
+Vec3f *Tri_RotateMesh(Tri_Mesh *mesh, Vec3f rotation);
+void Tri_sortFaces(Tri_Face* faces, int first,int last);
 
 #endif /* MESH_H */

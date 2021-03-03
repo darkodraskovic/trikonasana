@@ -51,3 +51,30 @@ Vec3f* Tri_RotateMesh(Tri_Mesh* mesh, Vec3f rotation) {
     }
     return rotatedVertices;
 }
+
+void Tri_sortFaces(Tri_Face* faces, int first, int last) {
+    if (first >= last) return;
+
+    int i, j, pivot;
+    Tri_Face temp;
+    pivot = first;
+    i = first;
+    j = last;
+    
+    while(i < j) {
+        while (faces[i].depth <= faces[pivot].depth && i < last) i++;
+        while (faces[j].depth > faces[pivot].depth) j--;
+        if (i < j) {
+            temp = faces[i];
+            faces[i] = faces[j];
+            faces[j] = temp;
+        }
+    }
+    
+    temp = faces[pivot];
+    faces[pivot] = faces[j];
+    faces[j] = temp;
+    
+    Tri_sortFaces(faces, first, j-1);
+    Tri_sortFaces(faces, j+1, last);
+}
