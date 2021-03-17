@@ -5,6 +5,11 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_log.h>
 
+#include "Trini/Array.h"
+#include "Trini/Vector.h"
+#include "Trini/Matrix.h"
+
+#include "Trikonasana/Typedef.h"
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Consts.h"
 #include "Trikonasana/Draw.h"
@@ -14,9 +19,6 @@
 
 #include "Test.c"
 #include "Cube.h"
-#include "Trikonasana/Typedef.h"
-#include "Trini/Array.h"
-#include "Trini/Vector.h"
 
 Vec3f camPos = {.x = 0, .y = 0, .z = -7};
 Tri_Mesh* cubeMesh;
@@ -90,15 +92,25 @@ void input() {
 }
 
 void update(void) {
-    float rotSpeed = 0.01;
-    cubeMesh->rotation.x += rotSpeed;
-    cubeMesh->rotation.y += rotSpeed;
-    cubeMesh->rotation.z += rotSpeed;
+    float speed = 0.002;
+    /* cubeMesh->rotation.x += speed; */
+    /* cubeMesh->rotation.y += speed; */
+    cubeMesh->rotation.z += speed;
+
+    /* cubeMesh->scale.x += speed; */
+    /* cubeMesh->scale.y += speed; */
+    /* cubeMesh->scale.z += speed; */
+    
+    cubeMesh->position.x += speed;
+    /* cubeMesh->position.y += speed; */
+    /* cubeMesh->position.z += speed; */
 }
 
 void draw(void) {
     Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
-
+    Mat4 scaleMat = mat4Scale(cubeMesh->scale.x, cubeMesh->scale.y, cubeMesh->scale.z);
+    Mat4 translateMat = mat4Translate(cubeMesh->position.x, cubeMesh->position.y, cubeMesh->position.z);
+    
     Tri_Face* faces = NULL;
 
     for (int i = 0; i < arrSize(rotated); i += 3) {
@@ -110,6 +122,13 @@ void draw(void) {
             if (Tri_CullBackface(camPos, a, b, c)) continue;            
         }
 
+        a = mat4MulVec3(scaleMat, a);
+        b = mat4MulVec3(scaleMat, b);
+        c = mat4MulVec3(scaleMat, c);
+        a = mat4MulVec3(translateMat, a);
+        b = mat4MulVec3(translateMat, b);
+        c = mat4MulVec3(translateMat, c);
+        
         float depth = (a.z + b.z + c.z) / 3.0;
         color_t color = cubeMesh->triColors[i/3];
         arrPush(faces, ((Tri_Face){a, b, c, color, depth}));

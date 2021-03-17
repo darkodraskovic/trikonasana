@@ -8,6 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(trini SHARED
   Source/Trini/Array.c  
   Source/Trini/Vector.c  
+  Source/Trini/Matrix.c  
   )
 
 add_library(engine SHARED

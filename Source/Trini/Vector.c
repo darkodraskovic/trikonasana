@@ -22,10 +22,6 @@ char* vec3iToString(Vec3i* v) {
 
 // Vec2f
 
-void vec2fSet(Vec2f* v, float x, float y) {
-    v->x = x; v->y = y;
-}
-
 float vec2fLen(Vec2f v) {
     return sqrt(v.x * v.x + v.y * v.y);
 }
@@ -60,10 +56,6 @@ char* vec2fToString(Vec2f* v) {
 }
 
 // Vec3f
-
-void vec3fSet(Vec3f* v, float x, float y, float z) {
-    v->x = x; v->y = y; v->z = z;
-}
 
 float vec3fLen(Vec3f v) {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -136,3 +128,18 @@ Vec3f rotateVec3fZ(const Vec3f* v, float angle) {
     return result;
 }
 
+// Vec4f
+
+float vec4fDot(Vec4f v1, Vec4f v2) {
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;    
+}
+
+// Conversion
+
+Vec3f vec3FromVec4(Vec4f v) {
+    return (Vec3f){v.x, v.y, v.z};
+}
+
+Vec4f vec4FromVec3(Vec3f v) {
+    return (Vec4f){v.x, v.y, v.z, 1};
+}

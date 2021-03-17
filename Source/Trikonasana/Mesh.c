@@ -16,10 +16,9 @@ Tri_Mesh* Tri_CreateMesh() {
     mesh->uvTris = arrCreate(0, sizeof(int));
     
     mesh->triColors = arrCreate(0, sizeof(color_t));
-    
-    vec3fSet(&mesh->position, 0, 0, 0);
-    vec3fSet(&mesh->rotation, 0, 0, 0);
-    vec3fSet(&mesh->scale, 1, 1, 1);
+    mesh->position = (Vec3f){0,0,0};
+    mesh->rotation = (Vec3f){0,0,0};
+    mesh->scale = (Vec3f){1,1,1};
     return mesh;
 }
 
