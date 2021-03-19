@@ -43,10 +43,6 @@ float vec3fDot(Vec3f v1, Vec3f v2);
 Vec3f *vec3fNormLocal(Vec3f* v);
 char* vec3fToString(Vec3f* v);
 
-Vec3f rotateVec3fX(const Vec3f* v, float angle);
-Vec3f rotateVec3fY(const Vec3f* v, float angle);
-Vec3f rotateVec3fZ(const Vec3f* v, float angle);
-
 float vec4fDot(Vec4f v1, Vec4f v2);
 
 Vec3f vec3FromVec4(Vec4f v);

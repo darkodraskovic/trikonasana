@@ -29,7 +29,6 @@ typedef struct {
 Tri_Mesh *Tri_CreateMesh();
 void Tri_DestroyMesh(Tri_Mesh *mesh);
 
-Vec3f *Tri_RotateMesh(Tri_Mesh *mesh, Vec3f rotation);
 void Tri_sortFaces(Tri_Face* faces, int first,int last);
 
 #endif /* MESH_H */

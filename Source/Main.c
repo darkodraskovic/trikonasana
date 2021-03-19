@@ -92,46 +92,55 @@ void input() {
 }
 
 void update(void) {
-    float speed = 0.002;
-    /* cubeMesh->rotation.x += speed; */
-    /* cubeMesh->rotation.y += speed; */
-    cubeMesh->rotation.z += speed;
+    float speed = 0.001;
+    /* cubeMesh->rotation.x += speed * 10; */
+    cubeMesh->rotation.y += speed * 10;
+    /* cubeMesh->rotation.z += speed * 10; */
 
-    /* cubeMesh->scale.x += speed; */
-    /* cubeMesh->scale.y += speed; */
-    /* cubeMesh->scale.z += speed; */
+    cubeMesh->scale.x += speed;
+    cubeMesh->scale.y += speed;
+    cubeMesh->scale.z += speed;
     
-    cubeMesh->position.x += speed;
-    /* cubeMesh->position.y += speed; */
-    /* cubeMesh->position.z += speed; */
+    cubeMesh->position.x += speed * 3;
+    /* cubeMesh->position.y += speed * 3; */
+    /* cubeMesh->position.z += speed * 3; */
 }
 
 void draw(void) {
-    Vec3f* rotated = Tri_RotateMesh(cubeMesh, cubeMesh->rotation);
-    Mat4 scaleMat = mat4Scale(cubeMesh->scale.x, cubeMesh->scale.y, cubeMesh->scale.z);
-    Mat4 translateMat = mat4Translate(cubeMesh->position.x, cubeMesh->position.y, cubeMesh->position.z);
+    Mat4 rotateX = mat4RotateX(cubeMesh->rotation.x);
+    Mat4 rotateY = mat4RotateY(cubeMesh->rotation.y);
+    Mat4 rotateZ = mat4RotateZ(cubeMesh->rotation.z);
+    Mat4 scale = mat4Scale(cubeMesh->scale.x, cubeMesh->scale.y, cubeMesh->scale.z);
+    Mat4 translate = mat4Translate(cubeMesh->position.x, cubeMesh->position.y, cubeMesh->position.z);
+
+    Mat4 R = mat4MulMat4(rotateY, mat4MulMat4(rotateY, rotateX));
+    Mat4 STR = mat4MulMat4(translate, mat4MulMat4(scale, R));
     
     Tri_Face* faces = NULL;
 
-    for (int i = 0; i < arrSize(rotated); i += 3) {
-        Vec3f a = rotated[i];
-        Vec3f b = rotated[i+1];
-        Vec3f c = rotated[i+2];
+    Vec3f* vertices = cubeMesh->vertices;
+    Vec3i* tris = cubeMesh->vTris;
+    for (int i = 0; i < arrSize(tris); i++) {
+        int* idx = (int*)(tris + i);
+        Vec3f vs[3];
+        for (int j = 0; j < 3; j++) {
+            vs[j] = vertices[idx[j]];
+            /* vs[j] = mat4MulVec3(scale, vs[j]); */
+            /* vs[j] = mat4MulVec3(rotateX, vs[j]); */
+            /* vs[j] = mat4MulVec3(rotateY, vs[j]); */
+            /* vs[j] = mat4MulVec3(rotateZ, vs[j]); */
+            /* vs[j] = mat4MulVec3(translate, vs[j]); */
 
-        if (TRI_cullMode == CM_BACK) {
-            if (Tri_CullBackface(camPos, a, b, c)) continue;            
+            vs[j] = mat4MulVec3(STR, vs[j]);
         }
 
-        a = mat4MulVec3(scaleMat, a);
-        b = mat4MulVec3(scaleMat, b);
-        c = mat4MulVec3(scaleMat, c);
-        a = mat4MulVec3(translateMat, a);
-        b = mat4MulVec3(translateMat, b);
-        c = mat4MulVec3(translateMat, c);
+        if (TRI_cullMode == CM_BACK) {
+            if (Tri_CullBackface(camPos, vs[0], vs[1], vs[2])) continue;
+        }
         
-        float depth = (a.z + b.z + c.z) / 3.0;
-        color_t color = cubeMesh->triColors[i/3];
-        arrPush(faces, ((Tri_Face){a, b, c, color, depth}));
+        float depth = (vs[0].z + vs[1].z + vs[2].z) / 3.0;
+        color_t color = cubeMesh->triColors[i];
+        arrPush(faces, ((Tri_Face){vs[0], vs[1], vs[2], color, depth}));
     }
 
     // sort ascending
@@ -158,7 +167,7 @@ void draw(void) {
         }        
     }
     
-    arrDestroy(rotated);
+    /* arrDestroy(rotated); */
     arrDestroy(faces);
 }
 

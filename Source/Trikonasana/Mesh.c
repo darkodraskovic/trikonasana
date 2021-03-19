@@ -30,27 +30,6 @@ void Tri_DestroyMesh(Tri_Mesh* mesh) {
     free(mesh);
 }
 
-Vec3f* Tri_RotateMesh(Tri_Mesh* mesh, Vec3f rotation) {
-    Vec3f* rotatedVertices = arrCreate(arrSize(mesh->vTris)*3, sizeof(Vec3f));
-    for (int i = 0; i < arrSize(mesh->vTris); i++) {
-        Vec3i triIdx = mesh->vTris[i];
-        Vec3f triVerts[3] = {
-            mesh->vertices[triIdx.x],
-            mesh->vertices[triIdx.y],
-            mesh->vertices[triIdx.z],
-        };
-
-        for (int j = 0; j < 3; j++) {
-            Vec3f* transformed = &triVerts[j];
-            *transformed = rotateVec3fX(transformed, rotation.x);
-            *transformed = rotateVec3fY(transformed, rotation.y);
-            *transformed = rotateVec3fZ(transformed, rotation.z);
-            arrPush(rotatedVertices, *transformed);
-        }
-    }
-    return rotatedVertices;
-}
-
 void Tri_sortFaces(Tri_Face* faces, int first, int last) {
     if (first >= last) return;
 
