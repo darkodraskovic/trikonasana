@@ -4,7 +4,7 @@
 #include "Vector.h"
 
 typedef struct {
-    Vec4f m0, m1, m2, m3;
+    float m[4][4];
 } Mat4;
 
 Mat4 mat4Identity(void);

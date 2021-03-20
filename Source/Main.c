@@ -95,26 +95,30 @@ void update(void) {
     float speed = 0.001;
     /* cubeMesh->rotation.x += speed * 10; */
     cubeMesh->rotation.y += speed * 10;
-    /* cubeMesh->rotation.z += speed * 10; */
+    cubeMesh->rotation.z += speed * 10;
 
-    cubeMesh->scale.x += speed;
-    cubeMesh->scale.y += speed;
-    cubeMesh->scale.z += speed;
+    /* cubeMesh->scale.x += speed * 2; */
+    cubeMesh->scale.y += speed * 4;
+    /* cubeMesh->scale.z += speed * 4; */
     
-    cubeMesh->position.x += speed * 3;
+    cubeMesh->position.x += speed * 5;
     /* cubeMesh->position.y += speed * 3; */
     /* cubeMesh->position.z += speed * 3; */
 }
 
 void draw(void) {
-    Mat4 rotateX = mat4RotateX(cubeMesh->rotation.x);
-    Mat4 rotateY = mat4RotateY(cubeMesh->rotation.y);
-    Mat4 rotateZ = mat4RotateZ(cubeMesh->rotation.z);
-    Mat4 scale = mat4Scale(cubeMesh->scale.x, cubeMesh->scale.y, cubeMesh->scale.z);
-    Mat4 translate = mat4Translate(cubeMesh->position.x, cubeMesh->position.y, cubeMesh->position.z);
+    Mat4 W = mat4Identity();
+    Mat4 Rx = mat4RotateX(cubeMesh->rotation.x);
+    Mat4 Ry = mat4RotateY(cubeMesh->rotation.y);
+    Mat4 Rz = mat4RotateZ(cubeMesh->rotation.z);
+    Mat4 S = mat4Scale(cubeMesh->scale.x, cubeMesh->scale.y, cubeMesh->scale.z);
+    Mat4 T = mat4Translate(cubeMesh->position.x, cubeMesh->position.y, cubeMesh->position.z);
 
-    Mat4 R = mat4MulMat4(rotateY, mat4MulMat4(rotateY, rotateX));
-    Mat4 STR = mat4MulMat4(translate, mat4MulMat4(scale, R));
+    W = mat4MulMat4(S, W);
+    W = mat4MulMat4(Rx, W);
+    W = mat4MulMat4(Ry, W);
+    W = mat4MulMat4(Rz, W);
+    W = mat4MulMat4(T, W);
     
     Tri_Face* faces = NULL;
 
@@ -125,13 +129,7 @@ void draw(void) {
         Vec3f vs[3];
         for (int j = 0; j < 3; j++) {
             vs[j] = vertices[idx[j]];
-            /* vs[j] = mat4MulVec3(scale, vs[j]); */
-            /* vs[j] = mat4MulVec3(rotateX, vs[j]); */
-            /* vs[j] = mat4MulVec3(rotateY, vs[j]); */
-            /* vs[j] = mat4MulVec3(rotateZ, vs[j]); */
-            /* vs[j] = mat4MulVec3(translate, vs[j]); */
-
-            vs[j] = mat4MulVec3(STR, vs[j]);
+            vs[j] = mat4MulVec3(W, vs[j]);
         }
 
         if (TRI_cullMode == CM_BACK) {
