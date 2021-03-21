@@ -21,7 +21,7 @@ typedef struct {
 } Tri_Mesh;
 
 typedef struct {
-    Vec3f vertices[3];
+    Vec4f vertices[3];
     color_t color;
     float depth;
 } Tri_Face;

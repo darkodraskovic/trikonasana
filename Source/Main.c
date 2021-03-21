@@ -5,6 +5,7 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_log.h>
 
+#include "Trikonasana/Display.h"
 #include "Trini/Array.h"
 #include "Trini/Vector.h"
 #include "Trini/Matrix.h"
@@ -20,7 +21,6 @@
 #include "Test.c"
 #include "Cube.h"
 
-Vec3f camPos = {.x = 0, .y = 0, .z = -7};
 Tri_Mesh* cubeMesh;
 
 void start(void) {
@@ -93,17 +93,21 @@ void input() {
 
 void update(void) {
     float speed = 0.001;
-    /* cubeMesh->rotation.x += speed * 10; */
+    cubeMesh->rotation.x += speed * 10;
     cubeMesh->rotation.y += speed * 10;
     cubeMesh->rotation.z += speed * 10;
 
-    /* cubeMesh->scale.x += speed * 2; */
-    cubeMesh->scale.y += speed * 4;
+    /* cubeMesh->scale.x += speed; */
+    /* cubeMesh->scale.y += speed * 4; */
     /* cubeMesh->scale.z += speed * 4; */
-    
+
     cubeMesh->position.x += speed * 5;
     /* cubeMesh->position.y += speed * 3; */
     /* cubeMesh->position.z += speed * 3; */
+    
+    /* cubeMesh->position.x = 2; */
+    /* cubeMesh->position.y = 2; */
+    cubeMesh->position.z = 6;
 }
 
 void draw(void) {
@@ -126,14 +130,15 @@ void draw(void) {
     Vec3i* tris = cubeMesh->vTris;
     for (int i = 0; i < arrSize(tris); i++) {
         int* idx = (int*)(tris + i);
-        Vec3f vs[3];
+        Vec4f vs[3];
         for (int j = 0; j < 3; j++) {
-            vs[j] = vertices[idx[j]];
-            vs[j] = mat4MulVec3(W, vs[j]);
+            vs[j] = vec4FromVec3(vertices[idx[j]]) ;
+            vs[j] = mat4MulVec4(W, vs[j]);
+            vs[j] = Tri_ProjectPerspective(vs[j]);
         }
 
         if (TRI_cullMode == CM_BACK) {
-            if (Tri_CullBackface(camPos, vs[0], vs[1], vs[2])) continue;
+            if (Tri_CullBackface((Vec3f){0}, *(Vec3f*)(vs), *(Vec3f*)(vs + 1), *(Vec3f*)(vs + 2))) continue;
         }
         
         float depth = (vs[0].z + vs[1].z + vs[2].z) / 3.0;
@@ -147,16 +152,31 @@ void draw(void) {
     // cam is looking in the positive z direction
     for (int i = arrSize(faces)-1; i >= 0; i--) {
         Tri_Face* face = &faces[i];
-        Vec2f a = Tri_ProjectPerspective(camPos, face->vertices[0]);
-        Vec2f b = Tri_ProjectPerspective(camPos, face->vertices[1]);
-        Vec2f c = Tri_ProjectPerspective(camPos, face->vertices[2]);
+        Vec4f a = face->vertices[0];
+        Vec4f b = face->vertices[1];
+        Vec4f c = face->vertices[2];
 
+        float w = windowWidth / 2.0;
+        float h = windowHeight / 2.0;
+
+        a.x *= w;
+        a.x += w;
+        a.y *= h;
+        a.y += h;
+
+        b.x *= w;
+        b.x += w;
+        b.y *= h;
+        b.y += h;
+        
+        c.x *= w;
+        c.x += w;
+        c.y *= h;
+        c.y += h;
+        
         if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
         if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
         if (TRI_renderMask & RM_POINT) {
-            /* Tri_DrawPixel(pa.x, pa.y, RED); */
-            /* Tri_DrawPixel(pb.x, pb.y, RED); */
-            /* Tri_DrawPixel(pc.x, pc.y, RED); */
             int halfSize = 1;
             int size = 2 * halfSize;
             Tri_DrawRect(a.x-halfSize, a.y-halfSize, size, size, RED);
@@ -165,7 +185,6 @@ void draw(void) {
         }        
     }
     
-    /* arrDestroy(rotated); */
     arrDestroy(faces);
 }
 

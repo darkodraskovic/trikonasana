@@ -101,12 +101,6 @@ char* vec3fToString(Vec3f* v) {
     return str;
 }
 
-// Vec4f
-
-float vec4fDot(Vec4f v1, Vec4f v2) {
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;    
-}
-
 // Conversion
 
 Vec3f vec3FromVec4(Vec4f v) {

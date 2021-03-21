@@ -58,8 +58,15 @@ Mat4 mat4RotateZ(float angle) {
     return m;
 }
 
-Vec3f mat4MulVec3(Mat4 m, Vec3f v) {
-    return vec3FromVec4(mat4MulVec4(m, vec4FromVec3(v)));
+Mat4 mat4Perspective(float fov, float aspect, float near, float far) {
+    Mat4 m = {{{0}}};
+    float cotan = 1 / tan(fov / 2);
+    m.m[0][0] = aspect * cotan;
+    m.m[1][1] = cotan;
+    m.m[2][2] = far / (far - near);
+    m.m[2][3] = -near * m.m[2][2];
+    m.m[3][2] = 1.0;
+    return m;
 }
 
 Vec4f mat4MulVec4(Mat4 m, Vec4f v) {

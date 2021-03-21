@@ -1,3 +1,4 @@
+#include <math.h>
 #include "Display.h"
 
 void initBuffers();
@@ -15,6 +16,8 @@ int pixelSize = 2;
 
 size_t bufferSize;
 size_t pitch;
+
+Mat4 TRI_projectionMatrix;
 
 bool Tri_InitDisplay() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -36,6 +39,8 @@ bool Tri_InitDisplay() {
     }
 
     initBuffers();
+
+    TRI_projectionMatrix = mat4Perspective(M_PI / 3, (float)windowHeight / windowWidth, 0.1, 100);
 
     return true;
 };

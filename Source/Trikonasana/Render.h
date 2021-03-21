@@ -2,6 +2,7 @@
 #define RENDER_H
 
 #include "Trini/Vector.h"
+#include "Trini/Matrix.h"
 
 extern unsigned int TRI_renderMask;
 
@@ -17,6 +18,6 @@ void TRI_ToggleRenderMode(enum RenderMode rm);
 
 int Tri_CullBackface(Vec3f campPos, Vec3f a, Vec3f b, Vec3f c);
 Vec2f Tri_ProjectOrtho(Vec3f point);
-Vec2f Tri_ProjectPerspective(Vec3f campPos, Vec3f point);
+Vec4f Tri_ProjectPerspective(Vec4f point);
 
 #endif /* RENDER_H */

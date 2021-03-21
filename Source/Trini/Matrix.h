@@ -14,8 +14,8 @@ Mat4 mat4Translate(float tx, float ty, float tz);
 Mat4 mat4RotateX(float angle);
 Mat4 mat4RotateY(float angle);
 Mat4 mat4RotateZ(float angle);
+Mat4 mat4Perspective(float fov, float aspect, float near, float far);
 
-Vec3f mat4MulVec3(Mat4 m, Vec3f v);
 Vec4f mat4MulVec4(Mat4 m, Vec4f v);
 
 Mat4 mat4Transpose(Mat4 src);

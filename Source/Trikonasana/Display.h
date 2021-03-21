@@ -6,12 +6,15 @@
 #include <SDL2/SDL.h>
 
 #include "Typedef.h"
+#include "Trini/Matrix.h"
 
 extern color_t *renderBuffer;
 
 extern int windowWidth;
 extern int windowHeight;
 extern int pixelSize;
+
+extern Mat4 TRI_projectionMatrix;
 
 bool Tri_InitDisplay(void);
 void Tri_InitColorBuffer(void);

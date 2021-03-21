@@ -43,8 +43,6 @@ float vec3fDot(Vec3f v1, Vec3f v2);
 Vec3f *vec3fNormLocal(Vec3f* v);
 char* vec3fToString(Vec3f* v);
 
-float vec4fDot(Vec4f v1, Vec4f v2);
-
 Vec3f vec3FromVec4(Vec4f v);
 Vec4f vec4FromVec3(Vec3f v);
 

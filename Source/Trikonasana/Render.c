@@ -1,8 +1,8 @@
 #include "Display.h"
 #include "Render.h"
+#include "Trini/Matrix.h"
 
-int fovFactor = 512;
-unsigned int TRI_renderMask = RM_WIRE|RM_SOLID;
+unsigned int TRI_renderMask = RM_WIRE | RM_SOLID;
 
 void TRI_AddRenderMode(enum RenderMode rm) {
     TRI_renderMask |= rm;
@@ -25,18 +25,21 @@ int Tri_CullBackface(Vec3f campPos, Vec3f a, Vec3f b, Vec3f c) {
     return vec3fDot(camRay, norm) < 0;
 }
 
-Vec2f Tri_ProjectOrtho(Vec3f point) {
-    float x = point.x * fovFactor + (float)windowWidth / 2;
-    float y = point.y * fovFactor + (float)windowHeight / 2;
-    Vec2f projectedPoint = {.x = x, .y = y};
-    return projectedPoint;
-}
+/* Vec2f Tri_ProjectOrtho(Vec3f point) { */
+/*     float x = point.x * fovFactor + (float)windowWidth / 2; */
+/*     float y = point.y * fovFactor + (float)windowHeight / 2; */
+/*     Vec2f projectedPoint = {.x = x, .y = y}; */
+/*     return projectedPoint; */
+/* } */
 
-Vec2f Tri_ProjectPerspective(Vec3f campPos, Vec3f point) {
-    point.z -= campPos.z;
-    float x = point.x / point.z;
-    x = x * fovFactor + (float)windowWidth / 2;
-    float y = point.y / point.z;
-    y = y * fovFactor + (float)windowHeight / 2;
-    return (Vec2f){.x = x, .y = y};
+Vec4f Tri_ProjectPerspective(Vec4f point) {
+    Vec4f projPt = mat4MulVec4(TRI_projectionMatrix, point);
+
+    if (projPt.w) {
+        projPt.x /= projPt.w;
+        projPt.y /= projPt.w;
+        projPt.z /= projPt.w;
+    }
+    
+    return projPt;
 }
