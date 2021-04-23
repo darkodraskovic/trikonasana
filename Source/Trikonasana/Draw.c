@@ -48,12 +48,14 @@ void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) 
     Tri_DrawLine(x2, y2, x0, y0, color);
 }
 
+// positive y points downwards
 //      (x0,y0)
 //        /\
 //       /  \
 // (x1,y1)--(Mx,My)
 void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, color_t color) {
-    float m1 = (float)(x1 - x0) / (y1 - y0); // reciprocal slope (inverse)
+     // reciprocal slope (inverse) because we derive delta x from delta y (== 1)
+    float m1 = (float)(x1 - x0) / (y1 - y0);
     float m2 = (float)(Mx - x0) / (My - y0);
     float xStart = x0, xEnd = x0;
     for (int y = y0; y <= y1; y++) { // loop scanlines from top to bottom
@@ -67,12 +69,12 @@ void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, color_t colo
 //       \/
 //    (x2,y2)
 void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2, color_t color) {
-    float m1 = (float)(x1 - x2) / (y2 - y1); // reciprocal slope (inverse)
-    float m2 = (float)(Mx - x2) / (y2 - My);
+    float m1 = (float)(x1 - x2) / (y1 - y2); // reciprocal slope (inverse)
+    float m2 = (float)(Mx - x2) / (My - y2);
     float xStart = x2, xEnd = x2;
     for (int y = y2; y >= y1; y--) { // loop scanlines from top to bottom
         Tri_DrawLineHorizontal(xStart, y, xEnd, color);
-        xStart += m1; xEnd += m2;
+        xStart -= m1; xEnd -= m2; // -= because we regress along y axis
     }
 }
 

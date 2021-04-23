@@ -5,8 +5,8 @@
 
 #include <SDL2/SDL.h>
 
-#include "Typedef.h"
 #include "Trini/Matrix.h"
+#include "Color.h"
 
 extern color_t *renderBuffer;
 

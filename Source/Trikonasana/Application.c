@@ -1,5 +1,5 @@
-#include "Application.h"
 #include "Display.h"
+#include "Application.h"
 
 bool running = false;
 

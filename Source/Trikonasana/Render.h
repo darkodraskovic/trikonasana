@@ -3,6 +3,7 @@
 
 #include "Trini/Vector.h"
 #include "Trini/Matrix.h"
+#include "Trikonasana/Mesh.h"
 
 extern unsigned int TRI_renderMask;
 
@@ -16,7 +17,7 @@ void TRI_AddRenderMode(enum RenderMode rm);
 void TRI_RemoveRenderMode(enum RenderMode rm);
 void TRI_ToggleRenderMode(enum RenderMode rm);
 
-int Tri_CullBackface(Vec3f campPos, Vec3f a, Vec3f b, Vec3f c);
+int Tri_CullBackface(Vec3f campPos, const Tri_Face* face);
 Vec2f Tri_ProjectOrtho(Vec3f point);
 Vec4f Tri_ProjectPerspective(Vec4f point);
 

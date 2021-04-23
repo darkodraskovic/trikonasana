@@ -1,18 +1,20 @@
 #include <stdio.h>
 #include <time.h>
+#include <math.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_log.h>
 
 #include "Trikonasana/Display.h"
+#include "Trikonasana/Light.h"
 #include "Trini/Array.h"
 #include "Trini/Vector.h"
 #include "Trini/Matrix.h"
 
-#include "Trikonasana/Typedef.h"
+#include "Trikonasana/Color.h"
 #include "Trikonasana/AssetLoader.h"
-#include "Trikonasana/Consts.h"
+#include "Trikonasana/Color.h"
 #include "Trikonasana/Draw.h"
 #include "Trikonasana/Mesh.h"
 #include "Trikonasana/Render.h"
@@ -22,6 +24,7 @@
 #include "Cube.h"
 
 Tri_Mesh* cubeMesh;
+Tri_Light light;
 
 void start(void) {
     msPerUpdate = 1000. / 60;
@@ -32,8 +35,8 @@ void start(void) {
 
     /* Tri_Mesh* mesh = Tri_CreateMesh(); */
 
-    /* cubeMesh = Tri_LoadObj("assets/cube.obj"); */
-    cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj");
+    /* cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj"); */
+    cubeMesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj");
     if (!cubeMesh) {
         exit(1);
     }
@@ -59,7 +62,8 @@ void start(void) {
     srand(time(NULL));   // Initialization, should only be called once.
 
     for (int i = 0; i < arrSize(cubeMesh->vTris); i++) {
-        int r = rand() % WHITE + 0x000000FF;
+        /* int r = rand() % WHITE + 0x000000FF; */
+        int r = WHITE;
         arrPush(cubeMesh->triColors, r);
         /* arrPush(cubeMesh->triColors, RED); */
     }
@@ -67,11 +71,10 @@ void start(void) {
     /*     SDL_Log("%d", cubeMesh->colors[i]); */
     /* } */
 
-    
+    light.direction = vec3fNorm((Vec3f){1,1,1});
 }
 
 void input() {
-
     switch (TRI_event.type) {
     case SDL_KEYDOWN:
         if (TRI_event.key.keysym.sym == SDLK_1) {
@@ -101,12 +104,12 @@ void update(void) {
     /* cubeMesh->scale.y += speed * 4; */
     /* cubeMesh->scale.z += speed * 4; */
 
-    cubeMesh->position.x += speed * 5;
+    /* cubeMesh->position.x += speed * 2; */
     /* cubeMesh->position.y += speed * 3; */
-    /* cubeMesh->position.z += speed * 3; */
+    /* cubeMesh->position.z -= speed * 3; */
     
     /* cubeMesh->position.x = 2; */
-    /* cubeMesh->position.y = 2; */
+    cubeMesh->position.y = 1.5;
     cubeMesh->position.z = 6;
 }
 
@@ -125,36 +128,48 @@ void draw(void) {
     W = mat4MulMat4(T, W);
     
     Tri_Face* faces = NULL;
-
     Vec3f* vertices = cubeMesh->vertices;
     Vec3i* tris = cubeMesh->vTris;
+    
     for (int i = 0; i < arrSize(tris); i++) {
         int* idx = (int*)(tris + i);
         Vec4f vs[3];
         for (int j = 0; j < 3; j++) {
             vs[j] = vec4FromVec3(vertices[idx[j]]) ;
             vs[j] = mat4MulVec4(W, vs[j]);
+        }
+        Vec3f worldNorm = Tri_CalcTriNormal(vec3FromVec4(vs[0]), vec3FromVec4(vs[1]), vec3FromVec4(vs[2]));
+        for (int j = 0; j < 3; j++) {
             vs[j] = Tri_ProjectPerspective(vs[j]);
         }
 
+        Vec3f a = vec3FromVec4(vs[0]);
+        Vec3f b = vec3FromVec4(vs[1]);
+        Vec3f c = vec3FromVec4(vs[2]);
+        
+        Tri_Face face = {a, b, c};
+        face.color = Tri_SetColorBrightness(
+            cubeMesh->triColors[i],
+            Tri_CalcLightIntensity(&light, worldNorm)
+            );
+        face.depth =  (a.z + b.z + c.z) / 3.0; // average face depth used in painter's algorithm
+
         if (TRI_cullMode == CM_BACK) {
-            if (Tri_CullBackface((Vec3f){0}, *(Vec3f*)(vs), *(Vec3f*)(vs + 1), *(Vec3f*)(vs + 2))) continue;
+            if (Tri_CullBackface((Vec3f){0}, &face)) continue;
         }
         
-        float depth = (vs[0].z + vs[1].z + vs[2].z) / 3.0;
-        color_t color = cubeMesh->triColors[i];
-        arrPush(faces, ((Tri_Face){vs[0], vs[1], vs[2], color, depth}));
+        arrPush(faces, face);
     }
 
-    // sort ascending
-    Tri_sortFaces(faces, 0, arrSize(faces)-1);
+    // sort ascending (final step in painter's algorithm)
+    Tri_SortFaces(faces, 0, arrSize(faces)-1);
 
     // cam is looking in the positive z direction
     for (int i = arrSize(faces)-1; i >= 0; i--) {
         Tri_Face* face = &faces[i];
-        Vec4f a = face->vertices[0];
-        Vec4f b = face->vertices[1];
-        Vec4f c = face->vertices[2];
+        Vec3f a = face->vertices[0];
+        Vec3f b = face->vertices[1];
+        Vec3f c = face->vertices[2];
 
         float w = windowWidth / 2.0;
         float h = windowHeight / 2.0;

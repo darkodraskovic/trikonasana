@@ -14,10 +14,12 @@ add_library(trini SHARED
 add_library(engine SHARED
   Source/Trikonasana/Application.c
   Source/Trikonasana/AssetLoader.c
+  Source/Trikonasana/Color.c
   Source/Trikonasana/Display.c
   Source/Trikonasana/Draw.c
-  Source/Trikonasana/Render.c
+  Source/Trikonasana/Light.c
   Source/Trikonasana/Mesh.c
+  Source/Trikonasana/Render.c
   )
 target_include_directories(engine PUBLIC Source)
 target_link_libraries(engine PUBLIC SDL2 trini)

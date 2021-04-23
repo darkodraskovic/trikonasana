@@ -1,5 +1,6 @@
 #include "Display.h"
 #include "Render.h"
+#include "Trikonasana/Mesh.h"
 #include "Trini/Matrix.h"
 
 unsigned int TRI_renderMask = RM_WIRE | RM_SOLID;
@@ -17,11 +18,10 @@ void TRI_ToggleRenderMode(enum RenderMode rm) {
     else TRI_renderMask |= rm;
 }
 
-int Tri_CullBackface(Vec3f campPos, Vec3f a, Vec3f b, Vec3f c) {
-    Vec3f ab = vec3fSub(b, a);
-    Vec3f ac = vec3fSub(c, a);
-    Vec3f norm = vec3fCross(ab, ac);
-    Vec3f camRay = vec3fSub(campPos, a);
+int Tri_CullBackface(Vec3f campPos, const Tri_Face* face) {
+    const Vec3f* verts = face->vertices;
+    Vec3f norm = Tri_CalcTriNormal(verts[0], verts[1], verts[2]);
+    Vec3f camRay = vec3fSub(campPos, verts[0]);
     return vec3fDot(camRay, norm) < 0;
 }
 

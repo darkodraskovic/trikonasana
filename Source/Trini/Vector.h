@@ -40,7 +40,9 @@ Vec3f vec3fMul(Vec3f v, float s);
 Vec3f vec3fDiv(Vec3f v, float s);
 Vec3f vec3fCross(Vec3f v1, Vec3f v2);
 float vec3fDot(Vec3f v1, Vec3f v2);
+Vec3f vec3fNorm(Vec3f v);
 Vec3f *vec3fNormLocal(Vec3f* v);
+Vec3f vec3fInv(Vec3f v);
 char* vec3fToString(Vec3f* v);
 
 Vec3f vec3FromVec4(Vec4f v);

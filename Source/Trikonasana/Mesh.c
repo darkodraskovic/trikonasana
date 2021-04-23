@@ -30,7 +30,13 @@ void Tri_DestroyMesh(Tri_Mesh* mesh) {
     free(mesh);
 }
 
-void Tri_sortFaces(Tri_Face* faces, int first, int last) {
+Vec3f Tri_CalcTriNormal(Vec3f a, Vec3f b, Vec3f c) {
+    Vec3f ab = vec3fSub(b, a);
+    Vec3f ac = vec3fSub(c, a);
+    return vec3fNorm(vec3fCross(ab, ac));    
+}
+
+void Tri_SortFaces(Tri_Face* faces, int first, int last) {
     if (first >= last) return;
 
     int i, j, pivot;
@@ -53,6 +59,6 @@ void Tri_sortFaces(Tri_Face* faces, int first, int last) {
     faces[pivot] = faces[j];
     faces[j] = temp;
     
-    Tri_sortFaces(faces, first, j-1);
-    Tri_sortFaces(faces, j+1, last);
+    Tri_SortFaces(faces, first, j-1);
+    Tri_SortFaces(faces, j+1, last);
 }

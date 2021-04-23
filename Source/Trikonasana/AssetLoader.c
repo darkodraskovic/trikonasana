@@ -14,13 +14,13 @@ char line[LINE_LEN];
 char* vFmt = "v %f %f %f";
 int vCount = 3;
 
-// List of vertex normals
-char* vnFmt = "vn %f %f %f";
-int vnCount = 3;
-
 // List of texture coordinates
 char* vtFmt = "vt %f %f";
 int vtCount = 2;
+
+// List of vertex normals
+char* vnFmt = "vn %f %f %f";
+int vnCount = 3;
 
 // Face element: vertex_index/texture_index/normal_index
 char* fFmt = "f %i/%i/%i %i/%i/%i %i/%i/%i";

@@ -87,6 +87,14 @@ float vec3fDot(Vec3f v1, Vec3f v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
+Vec3f vec3fNorm(Vec3f v) {
+    float len = vec3fLen(v);
+    v.x /= len;
+    v.y /= len;
+    v.z /= len;
+    return v;
+}
+
 Vec3f* vec3fNormLocal(Vec3f* v) {
     float len = vec3fLen(*v);
     v->x /= len;
@@ -99,6 +107,10 @@ char* vec3fToString(Vec3f* v) {
     char* str = malloc(sizeof(char) * 32);
     sprintf(str, "%.2f %.2f %.2f", v->x, v->y, v->z);
     return str;
+}
+
+Vec3f vec3fInv(Vec3f v) {
+    return (Vec3f){-v.x, -v.y, -v.z};
 }
 
 // Conversion
