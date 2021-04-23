@@ -1,4 +1,5 @@
 #include "Draw.h"
+#include "Trikonasana/Display.h"
 
 void swapInt(int* n1, int* n2) {
     int tmp = *n1;
@@ -16,7 +17,15 @@ void Tri_DrawPixel(int x, int y, color_t color) {
 // LINE
 
 void Tri_DrawLineHorizontal(int x0, int y0, int x1, color_t color) {
+    // if off-screen do nothing
+    if (y0 < 0 || y0 >= windowHeight) return;
     if (x0 > x1) swapInt(&x0, &x1);
+    if (x0 > windowWidth || x1 < 0) return;
+
+    // clamp horizontally
+    if (x0 < 0) x0 = 0;
+    if (x1 >= windowWidth) x1 = windowWidth-1;
+    
     int idx = windowWidth * y0 + x0;
     int end = windowWidth * y0 + x1;
     while (idx <= end) renderBuffer[idx++] = color;

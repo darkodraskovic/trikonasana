@@ -5,6 +5,36 @@
 #include "Matrix.h"
 #include "Vector.h"
 
+// Mat3
+
+Mat3 mat3Identity(void) {
+    Mat3 m = {
+        {{1, 0, 0},
+         {0, 1, 0},
+         {0, 0, 1}}
+    };
+    return m;
+}
+
+Vec3f mat3MulVec3(Mat3 m, Vec3f v) {
+    Vec3f result;
+    result.x = m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z;
+    result.y = m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z;
+    result.z = m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z;
+    return result;
+}
+
+Mat3 mat3Screen(int scrWidth, int scrHeight) {
+    Mat3 m = mat3Identity();
+    m.m[0][0] = (float)scrWidth/2;
+    m.m[0][2] = (float)scrWidth/2;
+    m.m[1][1] = -(float)scrHeight/2;
+    m.m[1][2] = (float)scrHeight/2;
+    return m;
+}
+
+// Mat4
+
 Mat4 mat4Identity(void) {
     Mat4 m = {
         {{1, 0, 0, 0},

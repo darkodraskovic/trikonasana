@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "Display.h"
+#include "Trini/Matrix.h"
 
 void initBuffers();
 
@@ -19,6 +20,7 @@ size_t bufferSize;
 size_t pitch;
 
 Mat4 TRI_projectionMatrix;
+Mat3 TRI_screenMatrix;
 
 bool Tri_InitDisplay() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -42,7 +44,8 @@ bool Tri_InitDisplay() {
     initBuffers();
 
     TRI_projectionMatrix = mat4Perspective(M_PI / 3, (float)windowHeight / windowWidth, 0.1, 100);
-
+    TRI_screenMatrix = mat3Screen(windowWidth, windowHeight);
+    
     return true;
 };
 

@@ -11,15 +11,15 @@ typedef uint32_t color_t;
 #define COL_MASK_B 0x0000FF00
 #define COL_MASK_A 0x000000FF
 
-extern color_t BLACK;
-extern color_t WHITE;
-extern color_t GREY;
-extern color_t RED;
-extern color_t GREEN;
-extern color_t BLUE;
-extern color_t YELLOW;
-extern color_t MAGENTA;
-extern color_t CYAN;
+#define BLACK (color_t)0x000000FF
+#define WHITE (color_t)0xFFFFFFFF
+#define GREY (color_t)0x777777FF
+#define RED (color_t)0xFF0000FF
+#define GREEN (color_t)0x00FF00FF
+#define BLUE (color_t)0x0000FFFF
+#define YELLOW (color_t)0xFFFF00FF
+#define MAGENTA (color_t)0xFF00FFFF
+#define CYAN (color_t)0x00FFFFFF
 
 color_t Tri_SetColorBrightness(color_t color, float percent);
 

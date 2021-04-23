@@ -15,6 +15,7 @@ extern int windowHeight;
 extern int pixelSize;
 
 extern Mat4 TRI_projectionMatrix;
+extern Mat3 TRI_screenMatrix;
 
 bool Tri_InitDisplay(void);
 void Tri_InitColorBuffer(void);

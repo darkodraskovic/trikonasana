@@ -71,7 +71,7 @@ void start(void) {
     /*     SDL_Log("%d", cubeMesh->colors[i]); */
     /* } */
 
-    light.direction = vec3fNorm((Vec3f){1,1,1});
+    light.direction = vec3fNorm((Vec3f){1,-1,1});
 }
 
 void input() {
@@ -104,12 +104,12 @@ void update(void) {
     /* cubeMesh->scale.y += speed * 4; */
     /* cubeMesh->scale.z += speed * 4; */
 
-    /* cubeMesh->position.x += speed * 2; */
-    /* cubeMesh->position.y += speed * 3; */
+    /* cubeMesh->position.x -= speed * 30; */
+    /* cubeMesh->position.y += speed * 30; */
     /* cubeMesh->position.z -= speed * 3; */
     
     /* cubeMesh->position.x = 2; */
-    cubeMesh->position.y = 1.5;
+    /* cubeMesh->position.y = 1.5; */
     cubeMesh->position.z = 6;
 }
 
@@ -133,26 +133,19 @@ void draw(void) {
     
     for (int i = 0; i < arrSize(tris); i++) {
         int* idx = (int*)(tris + i);
-        Vec4f vs[3];
+        static Vec4f vs[3];
         for (int j = 0; j < 3; j++) {
-            vs[j] = vec4FromVec3(vertices[idx[j]]) ;
-            vs[j] = mat4MulVec4(W, vs[j]);
+            vs[j] = mat4MulVec4(W, vec4FromVec3(vertices[idx[j]]));
         }
         Vec3f worldNorm = Tri_CalcTriNormal(vec3FromVec4(vs[0]), vec3FromVec4(vs[1]), vec3FromVec4(vs[2]));
         for (int j = 0; j < 3; j++) {
             vs[j] = Tri_ProjectPerspective(vs[j]);
         }
 
-        Vec3f a = vec3FromVec4(vs[0]);
-        Vec3f b = vec3FromVec4(vs[1]);
-        Vec3f c = vec3FromVec4(vs[2]);
-        
-        Tri_Face face = {a, b, c};
-        face.color = Tri_SetColorBrightness(
-            cubeMesh->triColors[i],
-            Tri_CalcLightIntensity(&light, worldNorm)
-            );
-        face.depth =  (a.z + b.z + c.z) / 3.0; // average face depth used in painter's algorithm
+        Tri_Face face = {vec3FromVec4(vs[0]), vec3FromVec4(vs[1]), vec3FromVec4(vs[2])};
+        face.color = Tri_SetColorBrightness(cubeMesh->triColors[i], Tri_CalcLightIntensity(&light, worldNorm));
+        // average face depth used in painter's algorithm
+        face.depth =  (face.vertices[0].z + face.vertices[1].z + face.vertices[2].z) / 3.0;
 
         if (TRI_cullMode == CM_BACK) {
             if (Tri_CullBackface((Vec3f){0}, &face)) continue;
@@ -167,28 +160,10 @@ void draw(void) {
     // cam is looking in the positive z direction
     for (int i = arrSize(faces)-1; i >= 0; i--) {
         Tri_Face* face = &faces[i];
-        Vec3f a = face->vertices[0];
-        Vec3f b = face->vertices[1];
-        Vec3f c = face->vertices[2];
+        Vec3f a = mat3MulVec3(TRI_screenMatrix, face->vertices[0]);
+        Vec3f b = mat3MulVec3(TRI_screenMatrix, face->vertices[1]);
+        Vec3f c = mat3MulVec3(TRI_screenMatrix, face->vertices[2]);
 
-        float w = windowWidth / 2.0;
-        float h = windowHeight / 2.0;
-
-        a.x *= w;
-        a.x += w;
-        a.y *= h;
-        a.y += h;
-
-        b.x *= w;
-        b.x += w;
-        b.y *= h;
-        b.y += h;
-        
-        c.x *= w;
-        c.x += w;
-        c.y *= h;
-        c.y += h;
-        
         if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
         if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
         if (TRI_renderMask & RM_POINT) {
