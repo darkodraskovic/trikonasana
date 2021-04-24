@@ -1,27 +1,19 @@
-#include <stdio.h>
 #include <time.h>
-#include <math.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_log.h>
+#include <SDL2/SDL_image.h>
 
+#include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
 #include "Trikonasana/Light.h"
-#include "Trini/Array.h"
-#include "Trini/Vector.h"
 #include "Trini/Matrix.h"
 
-#include "Trikonasana/Color.h"
 #include "Trikonasana/AssetLoader.h"
-#include "Trikonasana/Color.h"
 #include "Trikonasana/Draw.h"
-#include "Trikonasana/Mesh.h"
 #include "Trikonasana/Render.h"
 #include "Trikonasana/Application.h"
 
 #include "Test.c"
-#include "Cube.h"
 
 Tri_Mesh* cubeMesh;
 Tri_Light light;
@@ -30,46 +22,19 @@ void start(void) {
     msPerUpdate = 1000. / 60;
     testArray();
 
-    /* Tri_AddVertices(cubeMesh, cubeVertices, N_CUBE_VERTICES); */
-    /* Tri_AddTris(cubeMesh, cubeTris, N_CUBE_TRIS); */
-
-    /* Tri_Mesh* mesh = Tri_CreateMesh(); */
-
     /* cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj"); */
     cubeMesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj");
     if (!cubeMesh) {
         exit(1);
     }
-    /* for (int i = 0; i < arrSize(cubeMesh->vertices); ++i) { */
-    /*     /\* SDL_Log("%s", vec3ToString(&cubeMesh->vertices[i])); *\/ */
-    /* } */
-    /* for (int i = 0; i < arrSize(cubeMesh->normals); ++i) { */
-    /*     SDL_Log("%s", vec3ToString(&cubeMesh->normals[i])); */
-    /* } */
-    /* for (int i = 0; i < arrSize(cubeMesh->uvs); ++i) { */
-    /*     SDL_Log("%s", vec2fToString(&cubeMesh->uvs[i])); */
-    /* } */
-    /* for (int i = 0; i < arrSize(cubeMesh->vTris); ++i) { */
-    /*     SDL_Log("%s", vec3iToString(&cubeMesh->vTris[i])); */
-    /* } */
-    /* for (int i = 0; i < arrSize(cubeMesh->nTris); ++i) { */
-    /*     SDL_Log("%s", vec3iToString(&cubeMesh->nTris[i])); */
-    /* } */
-    /* for (int i = 0; i < arrSize(cubeMesh->uvTris); ++i) { */
-    /*     SDL_Log("%s", vec3iToString(&cubeMesh->uvTris[i])); */
-    /* } */
-
+    cubeMesh->texture = Tri_LoadTexture("assets/textures/w3d_bricks.png");
+    
     srand(time(NULL));   // Initialization, should only be called once.
-
     for (int i = 0; i < arrSize(cubeMesh->vTris); i++) {
-        /* int r = rand() % WHITE + 0x000000FF; */
+        /* int r = rand() % WHITE + 0xFF000000; */
         int r = WHITE;
         arrPush(cubeMesh->triColors, r);
-        /* arrPush(cubeMesh->triColors, RED); */
     }
-    /* for (int i = 0; i < arrSize(cubeMesh->colors); ++i) { */
-    /*     SDL_Log("%d", cubeMesh->colors[i]); */
-    /* } */
 
     light.direction = vec3fNorm((Vec3f){1,-1,1});
 }
@@ -87,6 +52,9 @@ void input() {
             TRI_ToggleRenderMode(RM_SOLID);
         }
         if (TRI_event.key.keysym.sym == SDLK_4) {
+            TRI_ToggleRenderMode(RM_TEXTURE);
+        }
+        if (TRI_event.key.keysym.sym == 'c') {
             if (TRI_cullMode == CM_NONE) TRI_cullMode = CM_BACK;
             else TRI_cullMode = CM_NONE;
         }
@@ -132,39 +100,48 @@ void draw(void) {
     Vec3i* tris = cubeMesh->vTris;
     
     for (int i = 0; i < arrSize(tris); i++) {
+        // TRANSFORM to camera space
         int* idx = (int*)(tris + i);
         static Vec4f vs[3];
         for (int j = 0; j < 3; j++) {
             vs[j] = mat4MulVec4(W, vec4FromVec3(vertices[idx[j]]));
         }
         Vec3f worldNorm = Tri_CalcTriNormal(vec3FromVec4(vs[0]), vec3FromVec4(vs[1]), vec3FromVec4(vs[2]));
+        if (TRI_cullMode == CM_BACK) {
+            if (Tri_CullBackface((Vec3f){0}, vec3FromVec4(vs[0]), worldNorm)) continue;
+        }
         for (int j = 0; j < 3; j++) {
             vs[j] = Tri_ProjectPerspective(vs[j]);
         }
 
+        // FACE
         Tri_Face face = {vec3FromVec4(vs[0]), vec3FromVec4(vs[1]), vec3FromVec4(vs[2])};
         face.color = Tri_SetColorBrightness(cubeMesh->triColors[i], Tri_CalcLightIntensity(&light, worldNorm));
         // average face depth used in painter's algorithm
         face.depth =  (face.vertices[0].z + face.vertices[1].z + face.vertices[2].z) / 3.0;
+        face.uvs[0] = cubeMesh->uvs[cubeMesh->uvTris[i].x];
+        face.uvs[1] = cubeMesh->uvs[cubeMesh->uvTris[i].y];
+        face.uvs[2] = cubeMesh->uvs[cubeMesh->uvTris[i].z];
 
-        if (TRI_cullMode == CM_BACK) {
-            if (Tri_CullBackface((Vec3f){0}, &face)) continue;
-        }
-        
         arrPush(faces, face);
     }
 
-    // sort ascending (final step in painter's algorithm)
+    // Sort ascending (final step in painter's algorithm)
     Tri_SortFaces(faces, 0, arrSize(faces)-1);
 
     // cam is looking in the positive z direction
     for (int i = arrSize(faces)-1; i >= 0; i--) {
         Tri_Face* face = &faces[i];
+        // TRANSFORM to screen space
         Vec3f a = mat3MulVec3(TRI_screenMatrix, face->vertices[0]);
         Vec3f b = mat3MulVec3(TRI_screenMatrix, face->vertices[1]);
         Vec3f c = mat3MulVec3(TRI_screenMatrix, face->vertices[2]);
 
-        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
+        // RENDER
+        if (TRI_renderMask & RM_TEXTURE) Tri_DrawTriTexture(
+            a.x, a.y, b.x, b.y, c.x, c.y,
+            face->uvs[0], face->uvs[1], face->uvs[2], cubeMesh->texture);
+        else if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
         if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
         if (TRI_renderMask & RM_POINT) {
             int halfSize = 1;

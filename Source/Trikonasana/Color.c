@@ -8,5 +8,5 @@ color_t Tri_SetColorBrightness(color_t color, float percent) {
     color_t r = (color & COL_MASK_R) * percent;
     color_t g = (color & COL_MASK_G) * percent;
     color_t b = (color & COL_MASK_B) * percent;
-    return (r & COL_MASK_R) | (g & COL_MASK_G) | (b & COL_MASK_B) | (color & COL_MASK_A);
+    return (color & COL_MASK_A) | (b & COL_MASK_B) | (g & COL_MASK_G) |  (r & COL_MASK_R);
 }

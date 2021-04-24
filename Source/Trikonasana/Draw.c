@@ -115,6 +115,11 @@ void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, color_t co
     }
 }
 
+void Tri_DrawTriTexture(int x0, int y0, int x1, int y1, int x2, int y2,
+                        Vec2f uv0, Vec2f uv1, Vec2f uv2, Tri_Texture* texture) {
+
+}
+
 // RECT
 
 void Tri_DrawGrid(int x, int y, int width, int height, int distance, color_t color) {

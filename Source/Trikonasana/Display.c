@@ -6,7 +6,7 @@
 void initBuffers();
 
 SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;;
+SDL_Renderer* Tri_renderer = NULL;;
 SDL_Texture *renderTexture = NULL;
 
 color_t* renderBuffer = NULL;;
@@ -35,8 +35,8 @@ bool Tri_InitDisplay() {
         return false;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    if (!renderer) {
+    Tri_renderer = SDL_CreateRenderer(window, -1, 0);
+    if (!Tri_renderer) {
         fprintf(stderr, "Error creating SDL renderer.\n");
         return false;
     }
@@ -56,9 +56,9 @@ void initBuffers() {
 
     renderBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
     clearBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
-    Tri_SetClearColor(0x000000FF);
+    Tri_SetClearColor(0xFF000000);
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-    renderTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+    renderTexture = SDL_CreateTexture(Tri_renderer, SDL_PIXELFORMAT_ABGR8888,
                           SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
@@ -74,20 +74,20 @@ void Tri_Render(void) {
     // renderTexture -> renderer -> rendering target
     // srcrect: NULL for the entire texture; dstrect: NULL for the entire rendering target
     // => if pixelSize > 1 then scale up texture (to "nearest" => pixelated)
-    SDL_RenderCopy(renderer, renderTexture, NULL, NULL);
+    SDL_RenderCopy(Tri_renderer, renderTexture, NULL, NULL);
 
     // clear renderBuffer
     memcpy(renderBuffer, clearBuffer, bufferSize);
 
     // render target -> screen
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(Tri_renderer);
 }
 
 void Tri_DestroyDisplay() {
     free(renderBuffer);
     free(clearBuffer);
 
-    SDL_DestroyRenderer(renderer);
+    SDL_DestroyRenderer(Tri_renderer);
     SDL_DestroyWindow(window);
 
     SDL_Quit();

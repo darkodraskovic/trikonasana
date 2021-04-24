@@ -8,6 +8,7 @@
 #include "Trini/Matrix.h"
 #include "Color.h"
 
+extern SDL_Renderer* Tri_renderer;
 extern color_t *renderBuffer;
 
 extern int windowWidth;

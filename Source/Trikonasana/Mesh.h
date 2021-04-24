@@ -5,6 +5,10 @@
 #include "Trikonasana/Color.h"
 
 typedef struct {
+    Vec3f position;
+    Vec3f rotation;
+    Vec3f scale;
+    
     Vec3f* vertices;
     Vec3f* normals;
     Vec2f* uvs;
@@ -14,14 +18,13 @@ typedef struct {
     Vec3i* uvTris;
     
     color_t* triColors; // face colors
-    
-    Vec3f position;
-    Vec3f rotation;
-    Vec3f scale;
+    Tri_Texture* texture;
 } Tri_Mesh;
 
+// Tri_Face is used to render face and is populated from (transformed) Tri_Mesh data
 typedef struct {
     Vec3f vertices[3];
+    Vec2f uvs[3];
     color_t color;
     float depth;
 } Tri_Face;

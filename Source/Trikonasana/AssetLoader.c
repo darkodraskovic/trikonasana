@@ -1,10 +1,15 @@
-#include <SDL2/SDL_log.h>
+#include <SDL2/SDL_image.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "AssetLoader.h"
+#include "Trikonasana/Color.h"
 #include "Trini/Array.h"
 #include "Trini/Vector.h"
+
+#include "Display.h"
+#include "AssetLoader.h"
 
 #define LINE_LEN 256
 
@@ -83,4 +88,19 @@ Tri_Mesh* Tri_LoadObj(char* filePath) {
     fclose(file);
 
     return mesh;
+}
+
+Tri_Texture* Tri_LoadTexture(const char *fileName) {
+    SDL_Surface* surface = IMG_Load(fileName);
+    int w = surface->w;
+    int h = surface->h;
+    
+    Tri_Texture* texture = malloc(sizeof(Tri_Texture));
+    texture->width = w;
+    texture->height = h;
+    texture->data = NULL;
+    arrAppend(texture->data, (uint32_t*)surface->pixels, w * h);
+    
+    SDL_FreeSurface(surface);
+    return texture;
 }

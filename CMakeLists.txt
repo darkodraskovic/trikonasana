@@ -22,7 +22,7 @@ add_library(engine SHARED
   Source/Trikonasana/Render.c
   )
 target_include_directories(engine PUBLIC Source)
-target_link_libraries(engine PUBLIC SDL2 trini)
+target_link_libraries(engine PUBLIC SDL2 SDL2_image trini)
 
 add_executable(main
   Source/Main.c
