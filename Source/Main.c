@@ -1,7 +1,5 @@
+#include <raylib.h>
 #include <time.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
 #include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
@@ -19,7 +17,6 @@ Tri_Mesh* cubeMesh;
 Tri_Light light;
 
 void start(void) {
-    msPerUpdate = 1000. / 60;
     testArray();
 
     /* cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj"); */
@@ -27,12 +24,12 @@ void start(void) {
     if (!cubeMesh) {
         exit(1);
     }
-    cubeMesh->texture = Tri_LoadTexture("assets/textures/w3d_bricks.png");
+    /* cubeMesh->texture = Tri_LoadTexture("assets/textures/w3d_bricks.png"); */
     
     srand(time(NULL));   // Initialization, should only be called once.
     for (int i = 0; i < arrSize(cubeMesh->vTris); i++) {
         /* int r = rand() % WHITE + 0xFF000000; */
-        int r = WHITE;
+        int r = 0xFFFFFFFF;
         arrPush(cubeMesh->triColors, r);
     }
 
@@ -40,26 +37,22 @@ void start(void) {
 }
 
 void input() {
-    switch (TRI_event.type) {
-    case SDL_KEYDOWN:
-        if (TRI_event.key.keysym.sym == SDLK_1) {
+        if (IsKeyPressed('1')) {
             TRI_ToggleRenderMode(RM_POINT);
         }
-        if (TRI_event.key.keysym.sym == SDLK_2) {
+        if (IsKeyPressed('2')) {
             TRI_ToggleRenderMode(RM_WIRE);
         }
-        if (TRI_event.key.keysym.sym == SDLK_3) {
+        if (IsKeyPressed('3')) {
             TRI_ToggleRenderMode(RM_SOLID);
         }
-        if (TRI_event.key.keysym.sym == SDLK_4) {
+        if (IsKeyPressed('4')) {
             TRI_ToggleRenderMode(RM_TEXTURE);
         }
-        if (TRI_event.key.keysym.sym == 'c') {
+        if (IsKeyPressed('C')) {
             if (TRI_cullMode == CM_NONE) TRI_cullMode = CM_BACK;
             else TRI_cullMode = CM_NONE;
         }
-        break;
-    }
 }
 
 void update(void) {
@@ -142,13 +135,13 @@ void draw(void) {
             a.x, a.y, b.x, b.y, c.x, c.y,
             face->uvs[0], face->uvs[1], face->uvs[2], cubeMesh->texture);
         else if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
-        if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
+        if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, 0xFF00FF00);
         if (TRI_renderMask & RM_POINT) {
             int halfSize = 1;
             int size = 2 * halfSize;
-            Tri_DrawRect(a.x-halfSize, a.y-halfSize, size, size, RED);
-            Tri_DrawRect(b.x-halfSize, b.y-halfSize, size, size, RED);
-            Tri_DrawRect(c.x-halfSize, c.y-halfSize, size, size, RED);
+            Tri_DrawRect(a.x-halfSize, a.y-halfSize, size, size, 0xFF0000FF);
+            Tri_DrawRect(b.x-halfSize, b.y-halfSize, size, size, 0xFF0000FF);
+            Tri_DrawRect(c.x-halfSize, c.y-halfSize, size, size, 0xFF0000FF);
         }        
     }
     

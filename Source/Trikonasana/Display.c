@@ -1,16 +1,17 @@
-#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "raylib.h"
 
 #include "Display.h"
-#include "Trini/Matrix.h"
+#include "Color.h"
 
 void initBuffers();
 
-SDL_Window* window = NULL;
-SDL_Renderer* Tri_renderer = NULL;;
-SDL_Texture *renderTexture = NULL;
+Texture2D renderTexture;
 
-color_t* renderBuffer = NULL;;
-color_t* clearBuffer = NULL;;
+color_t* renderBuffer = NULL;
+color_t* clearBuffer = NULL;
 
 int windowWidth = 640;
 int windowHeight = 400;
@@ -22,45 +23,26 @@ size_t pitch;
 Mat4 TRI_projectionMatrix;
 Mat3 TRI_screenMatrix;
 
-bool Tri_InitDisplay() {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        fprintf(stderr, "Error initializing SDL.\n");
-        return false;
-    };
-
-    window = SDL_CreateWindow(NULL, 0, 0, windowWidth * pixelSize, windowHeight * pixelSize,
-                              SDL_WINDOW_BORDERLESS);
-    if (!window) {
-        fprintf(stderr, "Error creating SDL window.\n");
-        return false;
-    }
-
-    Tri_renderer = SDL_CreateRenderer(window, -1, 0);
-    if (!Tri_renderer) {
-        fprintf(stderr, "Error creating SDL renderer.\n");
-        return false;
-    }
-
-    initBuffers();
-
-    TRI_projectionMatrix = mat4Perspective(M_PI / 3, (float)windowHeight / windowWidth, 0.1, 100);
-    TRI_screenMatrix = mat3Screen(windowWidth, windowHeight);
+void Tri_InitDisplay() {
+    // init window
+    InitWindow(windowWidth * pixelSize, windowHeight * pixelSize, "Trikonasana - CPU renderer");    
+    SetTargetFPS(60);
     
-    return true;
-};
-
-
-void initBuffers() {
+    // init buffers
     bufferSize = windowWidth * windowHeight * sizeof(color_t);
     pitch = windowWidth * sizeof(color_t);
 
     renderBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
     clearBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
     Tri_SetClearColor(0xFF000000);
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-    renderTexture = SDL_CreateTexture(Tri_renderer, SDL_PIXELFORMAT_ABGR8888,
-                          SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
-}
+
+    Image image = GenImageColor(windowWidth, windowHeight, BLACK);
+    renderTexture = LoadTextureFromImage(image);
+
+    // init matrices
+    TRI_projectionMatrix = mat4Perspective(PI / 3, (float)windowHeight / windowWidth, 0.1, 100);
+    TRI_screenMatrix = mat3Screen(windowWidth, windowHeight);
+};
 
 void Tri_SetClearColor(color_t color) {
     int i = 0;
@@ -68,27 +50,18 @@ void Tri_SetClearColor(color_t color) {
 }
 
 void Tri_Render(void) {
-    // renderBuffer -> renderTexture
-    SDL_UpdateTexture(renderTexture, NULL, renderBuffer, pitch);
+    UpdateTexture(renderTexture, renderBuffer);
+    
+    BeginDrawing();
+    DrawTextureEx(renderTexture, (Vector2){0,0}, 0, pixelSize, WHITE);
+    EndDrawing();
 
-    // renderTexture -> renderer -> rendering target
-    // srcrect: NULL for the entire texture; dstrect: NULL for the entire rendering target
-    // => if pixelSize > 1 then scale up texture (to "nearest" => pixelated)
-    SDL_RenderCopy(Tri_renderer, renderTexture, NULL, NULL);
-
-    // clear renderBuffer
     memcpy(renderBuffer, clearBuffer, bufferSize);
-
-    // render target -> screen
-    SDL_RenderPresent(Tri_renderer);
 }
 
 void Tri_DestroyDisplay() {
     free(renderBuffer);
     free(clearBuffer);
 
-    SDL_DestroyRenderer(Tri_renderer);
-    SDL_DestroyWindow(window);
-
-    SDL_Quit();
+    CloseWindow();
 }

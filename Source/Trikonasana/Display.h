@@ -3,12 +3,9 @@
 
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
-
 #include "Trini/Matrix.h"
 #include "Color.h"
 
-extern SDL_Renderer* Tri_renderer;
 extern color_t *renderBuffer;
 
 extern int windowWidth;
@@ -18,7 +15,7 @@ extern int pixelSize;
 extern Mat4 TRI_projectionMatrix;
 extern Mat3 TRI_screenMatrix;
 
-bool Tri_InitDisplay(void);
+void Tri_InitDisplay(void);
 void Tri_InitColorBuffer(void);
 
 void Tri_Render(void);

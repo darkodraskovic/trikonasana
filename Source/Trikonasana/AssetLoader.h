@@ -1,8 +1,6 @@
 #ifndef ASSETLOADER_H
 #define ASSETLOADER_H
 
-#include <SDL2/SDL.h>
-
 #include "Trikonasana/Mesh.h"
 
 Tri_Mesh *Tri_LoadObj(char *filePath);
