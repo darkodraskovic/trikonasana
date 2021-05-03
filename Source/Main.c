@@ -22,8 +22,8 @@ void start(void) {
     msPerUpdate = 1000. / 60;
     testArray();
 
-    /* cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj"); */
-    cubeMesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj");
+    cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj");
+    /* cubeMesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj"); */
     if (!cubeMesh) {
         exit(1);
     }
@@ -49,9 +49,6 @@ void input() {
             TRI_ToggleRenderMode(RM_WIRE);
         }
         if (TRI_event.key.keysym.sym == SDLK_3) {
-            TRI_ToggleRenderMode(RM_SOLID);
-        }
-        if (TRI_event.key.keysym.sym == SDLK_4) {
             TRI_ToggleRenderMode(RM_TEXTURE);
         }
         if (TRI_event.key.keysym.sym == 'c') {

@@ -1,10 +1,26 @@
 #include "Draw.h"
+#include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
 
 void swapInt(int* n1, int* n2) {
     int tmp = *n1;
     *n1 = *n2;
     *n2 = tmp;
+}
+
+void swapFloat(float* n1, float* n2) {
+    float tmp = *n1;
+    *n1 = *n2;
+    *n2 = tmp;
+}
+
+void swapVec2f(Vec2f* a, Vec2f* b) {
+    int tmpX = a->x;
+    int tmpY = a->y;
+    a->x = b->x;
+    a->y = b->y;
+    b->x = tmpX;
+    b->y = tmpY;
 }
 
 // PIXEL
@@ -78,7 +94,7 @@ void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, color_t colo
 //       \/
 //    (x2,y2)
 void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2, color_t color) {
-    float m1 = (float)(x1 - x2) / (y1 - y2); // reciprocal slope (inverse)
+    float m1 = (float)(x1 - x2) / (y1 - y2); // reciprocal slope: dx / dy
     float m2 = (float)(Mx - x2) / (My - y2);
     float xStart = x2, xEnd = x2;
     for (int y = y2; y >= y1; y--) { // loop scanlines from top to bottom
@@ -117,7 +133,50 @@ void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, color_t co
 
 void Tri_DrawTriTexture(int x0, int y0, int x1, int y1, int x2, int y2,
                         Vec2f uv0, Vec2f uv1, Vec2f uv2, Tri_Texture* texture) {
+    // sort the vertices by y-coordinate ascending (y0 < y1 < y2)
+    if (y0 > y1) {
+        swapInt(&y0, &y1);
+        swapInt(&x0, &x1);
+        swapVec2f(&uv0, &uv1);
+    }
+    if (y1 > y2) {
+        swapInt(&y1, &y2);
+        swapInt(&x1, &x2);
+        swapVec2f(&uv1, &uv2);
+    }
+    if (y0 > y1) {
+        swapInt(&y0, &y1);
+        swapInt(&x0, &x1);
+        swapVec2f(&uv0, &uv1);
+    }
+    
+    // flat-bottom triangle
+    float m1 = (y1 - y0) ? (float)(x1 - x0) / (y1 - y0) : 0;
+    float m2 = (y2 - y0) ? (float)(x2 - x0) / (y2 - y0) : 0;
+    if (m2 < m1) swapFloat(&m1, &m2);
+    
+    for (int y = y0; y < y1; y++) {
+        int xStart = x0 + (y - y0) * m1;
+        int xEnd = x0 + (y - y0) * m2;
+        /* Tri_DrawLineHorizontal(xStart, y, xEnd, y % 2 ? RED : BLUE); */
+        for (int x = xStart; x <= xEnd; x++) {
+            Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? RED : BLUE);
+        }
+    }
 
+    // flat-top triangle
+    m1 = (y1 - y2) ? (float)(x1 - x2) / (y1 - y2) : 0;
+    m2 = (y0 - y2) ? (float)(x0 - x2) / (y0 - y2) : 0;
+    if (m1 < m2) swapFloat(&m1, &m2);
+    
+    for (int y = y2; y >= y1; y--) {
+        int xStart = x2 + (y - y2) * m1;
+        int xEnd = x2 + (y - y2) * m2;
+        /* Tri_DrawLineHorizontal(xStart, y, xEnd, y % 2 ? CYAN : YELLOW); */
+        for (int x = xStart; x <= xEnd; x++) {
+            Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? CYAN : YELLOW);
+        }
+    }        
 }
 
 // RECT
