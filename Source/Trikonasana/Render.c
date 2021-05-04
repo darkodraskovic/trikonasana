@@ -3,7 +3,7 @@
 #include "Trikonasana/Mesh.h"
 #include "Trini/Matrix.h"
 
-unsigned int TRI_renderMask = RM_WIRE | RM_SOLID;
+unsigned int TRI_renderMask = RM_POINT | RM_WIRE | RM_SOLID;
 
 void TRI_AddRenderMode(enum RenderMode rm) {
     TRI_renderMask |= rm;

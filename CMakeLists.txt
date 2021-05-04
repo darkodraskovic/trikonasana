@@ -3,6 +3,7 @@ project (boilerplate)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
+SET(CMAKE_C_FLAGS "-g -Wall -std=gnu11 -O0")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(trini SHARED

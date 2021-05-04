@@ -1,3 +1,4 @@
+#include <SDL2/SDL_log.h>
 #include <time.h>
 
 #include <SDL2/SDL.h>
@@ -6,6 +7,7 @@
 #include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
 #include "Trikonasana/Light.h"
+#include "Trini/Array.h"
 #include "Trini/Matrix.h"
 
 #include "Trikonasana/AssetLoader.h"
@@ -14,6 +16,7 @@
 #include "Trikonasana/Application.h"
 
 #include "Test.c"
+#include "Trini/Vector.h"
 
 Tri_Mesh* cubeMesh;
 Tri_Light light;
@@ -28,6 +31,16 @@ void start(void) {
         exit(1);
     }
     cubeMesh->texture = Tri_LoadTexture("assets/textures/w3d_bricks.png");
+    /* SDL_Log("%d", cubeMesh->texture->height); */
+    /* for (int i = 0; i < arrSize(cubeMesh->uvTris); i++) { */
+    /*     Vec3i uvTri = cubeMesh->uvTris[i]; */
+    /*     Vec2f a = cubeMesh->uvs[uvTri.x]; */
+    /*     Vec2f b = cubeMesh->uvs[uvTri.y]; */
+    /*     Vec2f c = cubeMesh->uvs[uvTri.z]; */
+    /*     puts(vec2fToString(&a)); */
+    /*     puts(vec2fToString(&b)); */
+    /*     puts(vec2fToString(&c)); */
+    /* } */
     
     srand(time(NULL));   // Initialization, should only be called once.
     for (int i = 0; i < arrSize(cubeMesh->vTris); i++) {
@@ -37,6 +50,8 @@ void start(void) {
     }
 
     light.direction = vec3fNorm((Vec3f){1,-1,1});
+
+    TRI_renderMask = RM_WIRE | RM_TEXTURE;
 }
 
 void input() {
@@ -49,6 +64,9 @@ void input() {
             TRI_ToggleRenderMode(RM_WIRE);
         }
         if (TRI_event.key.keysym.sym == SDLK_3) {
+            TRI_ToggleRenderMode(RM_SOLID);
+        }
+        if (TRI_event.key.keysym.sym == SDLK_4) {
             TRI_ToggleRenderMode(RM_TEXTURE);
         }
         if (TRI_event.key.keysym.sym == 'c') {
@@ -135,10 +153,10 @@ void draw(void) {
         Vec3f c = mat3MulVec3(TRI_screenMatrix, face->vertices[2]);
 
         // RENDER
+        if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
         if (TRI_renderMask & RM_TEXTURE) Tri_DrawTriTexture(
             a.x, a.y, b.x, b.y, c.x, c.y,
             face->uvs[0], face->uvs[1], face->uvs[2], cubeMesh->texture);
-        else if (TRI_renderMask & RM_SOLID) Tri_DrawTriSolid(a.x, a.y, b.x, b.y, c.x, c.y, face->color);
         if (TRI_renderMask & RM_WIRE) Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
         if (TRI_renderMask & RM_POINT) {
             int halfSize = 1;

@@ -1,3 +1,7 @@
+#include <math.h>
+
+#include "Trini/Vector.h"
+
 #include "Draw.h"
 #include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
@@ -23,12 +27,49 @@ void swapVec2f(Vec2f* a, Vec2f* b) {
     b->y = tmpY;
 }
 
+/*      A
+       / \
+      /   \
+     /     \
+    /       \
+   /    P    \
+  /           \
+ /             \
+B______________ C   */
+
+Vec3f getBarycentric(Vec2f a, Vec2f b, Vec2f c, Vec2f p) {
+    Vec2f ab = vec2fSub(b, a);
+    Vec2f ac = vec2fSub(c, a);
+    Vec2f bc = vec2fSub(c, b);
+    Vec2f ap = vec2fSub(p, a);
+    Vec2f bp = vec2fSub(p, b);
+
+    float abc = ab.x * ac.y - ab.y * ac.x;
+    if (!abc) abc += .001; // prevent div by 0
+    float alpha = (bc.x * bp.y - bc.y * bp.x) / abc;
+    float beta = (ap.x * ac.y - ap.y * ac.x) / abc;
+
+    return (Vec3f){alpha, beta, 1 - alpha - beta};
+}
+
 // PIXEL
 
 void Tri_DrawPixel(int x, int y, color_t color) {
     if (x > -1 && x < windowWidth && y > -1 && y < windowHeight)
         renderBuffer[windowWidth * y + x] = color;
 }
+
+void Tri_DrawTexel(int x, int y, Vec2f a, Vec2f b, Vec2f c,
+                   Vec2f uv0, Vec2f uv1, Vec2f uv2, Tri_Texture* texture)  {
+    Vec3f weights = getBarycentric(a, b, c, (Vec2f){x, y});
+    float u = uv0.x * weights.x + uv1.x * weights.y + uv2.x * weights.z;
+    float v = uv0.y * weights.x + uv1.y * weights.y + uv2.y * weights.z;
+    int texX = u * texture->width;
+    int texY = v * texture->height;
+
+    Tri_DrawPixel(x, y, texture->data[texY * texture->width + texX]);
+}
+
 
 // LINE
 
@@ -73,11 +114,11 @@ void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) 
     Tri_DrawLine(x2, y2, x0, y0, color);
 }
 
-// positive y points downwards
-//      (x0,y0)
-//        /\
-//       /  \
-// (x1,y1)--(Mx,My)
+/* positive y points downwards
+        (x0,y0)
+          /\
+         /  \
+   (x1,y1)--(Mx,My) */
 void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, color_t color) {
      // reciprocal slope (inverse) because we derive delta x from delta y (== 1)
     float m1 = (float)(x1 - x0) / (y1 - y0);
@@ -149,6 +190,10 @@ void Tri_DrawTriTexture(int x0, int y0, int x1, int y1, int x2, int y2,
         swapInt(&x0, &x1);
         swapVec2f(&uv0, &uv1);
     }
+
+    Vec2f a = {x0,y0};
+    Vec2f b = {x1,y1};
+    Vec2f c = {x2,y2};
     
     // flat-bottom triangle
     float m1 = (y1 - y0) ? (float)(x1 - x0) / (y1 - y0) : 0;
@@ -160,7 +205,8 @@ void Tri_DrawTriTexture(int x0, int y0, int x1, int y1, int x2, int y2,
         int xEnd = x0 + (y - y0) * m2;
         /* Tri_DrawLineHorizontal(xStart, y, xEnd, y % 2 ? RED : BLUE); */
         for (int x = xStart; x <= xEnd; x++) {
-            Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? RED : BLUE);
+            /* Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? RED : BLUE); */
+            Tri_DrawTexel(x, y, a, b, c, uv0, uv1, uv2, texture);
         }
     }
 
@@ -174,7 +220,8 @@ void Tri_DrawTriTexture(int x0, int y0, int x1, int y1, int x2, int y2,
         int xEnd = x2 + (y - y2) * m2;
         /* Tri_DrawLineHorizontal(xStart, y, xEnd, y % 2 ? CYAN : YELLOW); */
         for (int x = xStart; x <= xEnd; x++) {
-            Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? CYAN : YELLOW);
+            /* Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? CYAN : YELLOW); */
+            Tri_DrawTexel(x, y, a, b, c, uv0, uv1, uv2, texture);            
         }
     }        
 }
