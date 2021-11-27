@@ -2,23 +2,23 @@
 #define VECTOR_H
 
 typedef struct {
-    int x, y;
+  int x, y;
 } Vec2i;
 
 typedef struct {
-    int x, y, z;
+  int x, y, z;
 } Vec3i;
 
 typedef struct {
-    float x, y;
+  float x, y;
 } Vec2f;
 
 typedef struct {
-    float x, y, z;
+  float x, y, z;
 } Vec3f;
 
 typedef struct {
-    float x, y, z, w;
+  float x, y, z, w;
 } Vec4f;
 
 char *vec2iToString(Vec2i *v);
@@ -30,7 +30,7 @@ Vec2f vec2fSub(Vec2f v1, Vec2f v2);
 Vec2f vec2fMul(Vec2f v, float s);
 Vec2f vec2fDiv(Vec2f v, float s);
 float vec2fDot(Vec2f v1, Vec2f v2);
-Vec2f* vec2fNormLocal(Vec2f* v);
+Vec2f *vec2fNormLocal(Vec2f *v);
 char *vec2fToString(Vec2f *v);
 
 float vec3fLen(Vec3f v);
@@ -41,9 +41,9 @@ Vec3f vec3fDiv(Vec3f v, float s);
 Vec3f vec3fCross(Vec3f v1, Vec3f v2);
 float vec3fDot(Vec3f v1, Vec3f v2);
 Vec3f vec3fNorm(Vec3f v);
-Vec3f *vec3fNormLocal(Vec3f* v);
+Vec3f *vec3fNormLocal(Vec3f *v);
 Vec3f vec3fInv(Vec3f v);
-char* vec3fToString(Vec3f* v);
+char *vec3fToString(Vec3f *v);
 
 Vec3f vec3FromVec4(Vec4f v);
 Vec4f vec4FromVec3(Vec3f v);

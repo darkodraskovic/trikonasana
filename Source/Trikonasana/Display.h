@@ -1,22 +1,21 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include <SDL2/SDL.h>
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
-
-#include "Trini/Matrix.h"
 #include "Color.h"
+#include "Trini/Matrix.h"
 
 extern SDL_Renderer* Tri_renderer;
-extern color_t *renderBuffer;
+extern color_t* renderBuffer;
 
 extern int windowWidth;
 extern int windowHeight;
 extern int pixelSize;
 
 extern Mat4 TRI_projectionMatrix;
-extern Mat3 TRI_screenMatrix;
+extern Mat4 TRI_screenMatrix;
 
 bool Tri_InitDisplay(void);
 void Tri_InitColorBuffer(void);
