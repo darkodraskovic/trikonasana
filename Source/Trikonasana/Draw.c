@@ -54,7 +54,7 @@ Vec3f getBarycentric(Vec2f a, Vec2f b, Vec2f c, Vec2f p) {
   Vec2f bp = vec2fSub(p, b);
 
   float abc = ab.x * ac.y - ab.y * ac.x;
-  if (!abc) abc += .001;  // prevent div by 0
+  if (!abc) abc += 10e-3;  // prevent div by 0
   float alpha = (bc.x * bp.y - bc.y * bp.x) / abc;
   float beta = (ap.x * ac.y - ap.y * ac.x) / abc;
 
@@ -73,14 +73,13 @@ void Tri_DrawTexel(int x, int y, Vec4f a, Vec4f b, Vec4f c, Vec2f uv0,
   Vec3f weights = getBarycentric((Vec2f){a.x, a.y}, (Vec2f){b.x, b.y},
                                  (Vec2f){c.x, c.y}, (Vec2f){x, y});
 
-  float u = (uv0.x / a.w) * weights.x + (uv1.x / b.w) * weights.y +
-            (uv2.x / c.w) * weights.z;
-  float v = (uv0.y / a.w) * weights.x + (uv1.y / b.w) * weights.y +
-            (uv2.y / c.w) * weights.z;
-  float w =
-      (1 / a.w) * weights.x + (1 / b.w) * weights.y + (1 / c.w) * weights.z;
-  u /= w;
-  v /= w;
+  float A = weights.x * b.w * c.w;
+  float B = weights.y * a.w * c.w;
+  float C = weights.z * a.w * b.w;
+  float D = (A + B + C);
+  if (!D) D += 10e-3;  // prevent div by 0
+  float u = (uv0.x * A + uv1.x * B + uv2.x * C) / D;
+  float v = (uv0.y * A + uv1.y * B + uv2.y * C) / D;
 
   int texX = u * texture->width;
   int texY = v * texture->height;
