@@ -3,8 +3,8 @@
 #include <SDL2/SDL_log.h>
 #include <time.h>
 
+#include "Application.h"
 #include "Test.c"
-#include "Trikonasana/Application.h"
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
@@ -188,7 +188,11 @@ void draw(void) {
 void stop(void) { Tri_DestroyMesh(cubeMesh); }
 
 // Application
+#ifdef _WIN64
+int WinMain(int argc, char* argv[]) {
+#elif __linux__
 int main(int argc, char* argv[]) {
+#endif
   Tri_RunApp();
   return 0;
 }

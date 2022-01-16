@@ -8,32 +8,24 @@ Install [SDL2 library](https://www.libsdl.org/). For ode completion, compile err
 
 ## Configure && build
 
-Create `build` directory in the root directory, `cd` to `build` directory and run
+Create `build` directory in the root directory. 
+
+To configure and generate, run
 
 ```
-cmake ..
+cd build/ && cmake -G"Unix Makefiles" ..
 ```
 
-Staying in `build` directory, type
+to compile and run the program on Linux
 
 ```
-make
+cd build/ && make && cd ../bin && ./main
 ```
 
-to compile and run the program.
-
-## Run
-
-Create `bin` directory in the root directory. `cd` to `bin/` and run
+to compile and run the program on Windows (with MingW)
 
 ```
-./main
-```
-
-If you have created `bin`, you can `cd` to `build` and type
-
-```
-make && cd ../bin && ./main
+cd build/ && make && cd ../bin && main.exe
 ```
 
 ### Clangd
@@ -43,5 +35,12 @@ make && cd ../bin && ./main
 ```
 ln -s build/compile_commands.json .
 ```
+
+or
+
+```
+cd build/ && cmake -G"Unix Makefiles" .. && mv compile_commands.json ../
+```
+
 
 

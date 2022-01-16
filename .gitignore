@@ -3,3 +3,5 @@ bin/main
 compile_commands.json
 .clangd
 .cache
+*.exe
+*.dll

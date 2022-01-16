@@ -13,7 +13,6 @@ add_library(trini SHARED
   )
 
 add_library(engine SHARED
-  Source/Trikonasana/Application.c
   Source/Trikonasana/AssetLoader.c
   Source/Trikonasana/Color.c
   Source/Trikonasana/Display.c
@@ -26,8 +25,8 @@ target_include_directories(engine PUBLIC Source)
 target_link_libraries(engine PUBLIC SDL2 SDL2_image trini)
 
 add_executable(main
+  Source/Application.c  
   Source/Main.c
   )
-
 target_include_directories(main PUBLIC Source)
 target_link_libraries(main PRIVATE engine m)
