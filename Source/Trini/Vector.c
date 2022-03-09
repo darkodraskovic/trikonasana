@@ -6,17 +6,19 @@
 
 // Vec2i
 
+size_t bufferCount = 32;
+
 char* vec2iToString(Vec2i* v) {
-  char* str = malloc(sizeof(char) * 32);
-  sprintf(str, "%d %d", v->x, v->y);
+  char* str = malloc(sizeof(char) * bufferCount);
+  snprintf(str, bufferCount, "%d %d", v->x, v->y);
   return str;
 }
 
 // Vec2i
 
 char* vec3iToString(Vec3i* v) {
-  char* str = malloc(sizeof(char) * 32);
-  sprintf(str, "%d %d %d", v->x, v->y, v->z);
+  char* str = malloc(sizeof(char) * bufferCount);
+  snprintf(str, bufferCount, "%d %d %d", v->x, v->y, v->z);
   return str;
 }
 
@@ -43,7 +45,7 @@ Vec2f* vec2fNormLocal(Vec2f* v) {
 
 char* vec2fToString(Vec2f* v) {
   char* str = malloc(sizeof(char) * 32);
-  sprintf(str, "%.2f %.2f", v->x, v->y);
+  snprintf(str, bufferCount, "%.2f %.2f", v->x, v->y);
   return str;
 }
 
@@ -90,7 +92,7 @@ Vec3f* vec3fNormLocal(Vec3f* v) {
 
 char* vec3fToString(Vec3f* v) {
   char* str = malloc(sizeof(char) * 32);
-  sprintf(str, "%.2f %.2f %.2f", v->x, v->y, v->z);
+  snprintf(str, bufferCount, "%.2f %.2f %.2f", v->x, v->y, v->z);
   return str;
 }
 

@@ -23,10 +23,10 @@ typedef uint32_t color_t;
 
 color_t Tri_SetColorBrightness(color_t color, float percent);
 
-typedef struct{
-    int width;
-    int height;
-    color_t* data;
+typedef struct {
+  int width;
+  int height;
+  color_t* data;
 } Tri_Texture;
 
 #endif /* COLOR_H */

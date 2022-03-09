@@ -1,6 +1,8 @@
 #include "Display.h"
 
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "Trini/Matrix.h"
 
@@ -8,20 +10,17 @@ void initBuffers();
 
 SDL_Window* window = NULL;
 SDL_Renderer* Tri_renderer = NULL;
-;
 SDL_Texture* renderTexture = NULL;
 
 color_t* renderBuffer = NULL;
-;
 color_t* clearBuffer = NULL;
-;
 
 int windowWidth = 640;
 int windowHeight = 400;
 int pixelSize = 2;
 
 size_t bufferSize;
-size_t pitch;
+int pitch;
 
 Mat4 TRI_projectionMatrix;
 Mat4 TRI_screenMatrix;

@@ -20,7 +20,7 @@ Tri_Light light;
 Vec3f camPos = {0, 0, 0};
 
 void start(void) {
-  msPerUpdate = 1000. / 60;
+  msPerUpdate = 1000.f / 60;
   testArray();
 
   cubeMesh = Tri_LoadObj("assets/models/cube/cube.obj");
@@ -188,8 +188,10 @@ void draw(void) {
 void stop(void) { Tri_DestroyMesh(cubeMesh); }
 
 // Application
-#ifdef _WIN64
+#ifdef __MINGW32__
 int WinMain(int argc, char* argv[]) {
+#elif _WIN64
+int wmain(int argc, char* argv[]) {
 #elif __linux__
 int main(int argc, char* argv[]) {
 #endif
