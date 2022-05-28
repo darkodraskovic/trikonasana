@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "Trikonasana/Color.h"
+#include "Trini/Matrix.h"
 #include "Trini/Vector.h"
 
 typedef struct {
@@ -21,18 +22,9 @@ typedef struct {
   Tri_Texture* texture;
 } Tri_Mesh;
 
-// Tri_Face is used to render face and is populated from (transformed) Tri_Mesh
-// data
-typedef struct {
-  Vec4f vertices[3];
-  Vec2f uvs[3];
-  color_t color;
-  float depth;
-} Tri_Face;
-
 Tri_Mesh* Tri_CreateMesh();
 void Tri_DestroyMesh(Tri_Mesh* mesh);
 Vec3f Tri_CalcTriNormal(Vec3f a, Vec3f b, Vec3f c);
-void Tri_SortFaces(Tri_Face* faces, int first, int last);
+Mat4 Tri_CalcWorldMatrix(Tri_Mesh* mesh);
 
 #endif /* MESH_H */

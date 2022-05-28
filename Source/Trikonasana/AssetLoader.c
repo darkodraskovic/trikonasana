@@ -9,7 +9,6 @@
 #include "Display.h"
 #include "Trikonasana/Color.h"
 #include "Trini/Array.h"
-#include "Trini/Vector.h"
 
 #define LINE_LEN 256
 
@@ -65,8 +64,8 @@ Tri_Mesh* Tri_LoadObj(char* filePath) {
       arrPush(mesh->normals, norm);
     } else if (!strncmp(line, fFmt, 2)) {
       Vec3i vTri, uvTri, nTri;
-      if (sscanf(line, fFmt, &vTri.x, &uvTri.x, &nTri.x, &vTri.y, &uvTri.y,
-                 &nTri.y, &vTri.z, &uvTri.z, &nTri.z) < fCount) {
+      if (sscanf(line, fFmt, &vTri.x, &uvTri.x, &nTri.x, &vTri.y, &uvTri.y, &nTri.y, &vTri.z,
+                 &uvTri.z, &nTri.z) < fCount) {
         fprintf(stderr, "Error reading tri from obj file.\n");
         return NULL;
       };
@@ -95,14 +94,15 @@ Tri_Mesh* Tri_LoadObj(char* filePath) {
 
 Tri_Texture* Tri_LoadTexture(const char* fileName) {
   SDL_Surface* surface = IMG_Load(fileName);
-  int w = surface->w;
-  int h = surface->h;
 
-  Tri_Texture* texture = malloc(sizeof(Tri_Texture));
-  texture->width = w;
-  texture->height = h;
-  texture->data = NULL;
-  arrAppend(texture->data, (uint32_t*)surface->pixels, w * h);
+  Tri_Texture* texture = calloc(1, sizeof(Tri_Texture));
+
+  texture->width = surface->w;
+  texture->height = surface->h;
+
+  size_t size = surface->w * surface->h * sizeof(uint32_t);
+  texture->data = malloc(size);
+  memcpy(texture->data, (uint32_t*)surface->pixels, size);
 
   SDL_FreeSurface(surface);
   return texture;

@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "Trini/Array.h"
-#include "Trini/Vector.h"
 
 Tri_Mesh* Tri_CreateMesh() {
   Tri_Mesh* mesh = malloc(sizeof(Tri_Mesh));
@@ -36,29 +35,23 @@ Vec3f Tri_CalcTriNormal(Vec3f a, Vec3f b, Vec3f c) {
   return vec3fNorm(vec3fCross(ab, ac));
 }
 
-void Tri_SortFaces(Tri_Face* faces, int first, int last) {
-  if (first >= last) return;
+Mat4 Tri_CalcWorldMatrix(Tri_Mesh* mesh) {
+  Vec3f rotation = mesh->rotation;
+  Vec3f scale = mesh->scale;
+  Vec3f position = mesh->position;
 
-  int i, j, pivot;
-  Tri_Face temp;
-  pivot = first;
-  i = first;
-  j = last;
+  Mat4 Rx = mat4RotateX(rotation.x);
+  Mat4 Ry = mat4RotateY(rotation.y);
+  Mat4 Rz = mat4RotateZ(rotation.z);
+  Mat4 S = mat4Scale(scale.x, scale.y, scale.z);
+  Mat4 T = mat4Translate(position.x, position.y, position.z);
 
-  while (i < j) {
-    while (faces[i].depth <= faces[pivot].depth && i < last) i++;
-    while (faces[j].depth > faces[pivot].depth) j--;
-    if (i < j) {
-      temp = faces[i];
-      faces[i] = faces[j];
-      faces[j] = temp;
-    }
-  }
+  Mat4 W = mat4Identity();
+  W = mat4MulMat4(S, W);
+  W = mat4MulMat4(Rx, W);
+  W = mat4MulMat4(Ry, W);
+  W = mat4MulMat4(Rz, W);
+  W = mat4MulMat4(T, W);
 
-  temp = faces[pivot];
-  faces[pivot] = faces[j];
-  faces[j] = temp;
-
-  Tri_SortFaces(faces, first, j - 1);
-  Tri_SortFaces(faces, j + 1, last);
+  return W;
 }

@@ -54,7 +54,6 @@ Vec3f getBarycentric(Vec2f a, Vec2f b, Vec2f c, Vec2f p) {
   Vec2f bp = vec2fSub(p, b);
 
   float abc = ab.x * ac.y - ab.y * ac.x;
-  if (!abc) abc += 10e-3;  // prevent div by 0
   float alpha = (bc.x * bp.y - bc.y * bp.x) / abc;
   float beta = (ap.x * ac.y - ap.y * ac.x) / abc;
 
@@ -68,21 +67,24 @@ void Tri_DrawPixel(int x, int y, color_t color) {
     renderBuffer[windowWidth * y + x] = color;
 }
 
-void Tri_DrawTexel(int x, int y, Vec4f a, Vec4f b, Vec4f c, Vec2f uv0,
-                   Vec2f uv1, Vec2f uv2, Tri_Texture* texture) {
-  Vec3f weights = getBarycentric((Vec2f){a.x, a.y}, (Vec2f){b.x, b.y},
-                                 (Vec2f){c.x, c.y}, (Vec2f){x, y});
+void Tri_DrawTexel(int x, int y, Vec4f a, Vec4f b, Vec4f c, Vec2f uv0, Vec2f uv1, Vec2f uv2,
+                   Tri_Texture* texture) {
+  Vec3f weights =
+      getBarycentric((Vec2f){a.x, a.y}, (Vec2f){b.x, b.y}, (Vec2f){c.x, c.y}, (Vec2f){x, y});
 
   float A = weights.x * b.w * c.w;
   float B = weights.y * a.w * c.w;
   float C = weights.z * a.w * b.w;
   float D = (A + B + C);
-  if (!D) D += 10e-3;  // prevent div by 0
+
   float u = (uv0.x * A + uv1.x * B + uv2.x * C) / D;
   float v = (uv0.y * A + uv1.y * B + uv2.y * C) / D;
 
   int texX = u * texture->width;
   int texY = v * texture->height;
+
+  texX = texX % texture->width;
+  texY = texY % texture->height;
 
   Tri_DrawPixel(x, y, texture->data[texY * texture->width + texX]);
 }
@@ -124,8 +126,7 @@ void Tri_DrawLine(int x0, int y0, int x1, int y1, color_t color) {
 
 // TRIANGLE
 
-void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2,
-                 color_t color) {
+void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) {
   Tri_DrawLine(x0, y0, x1, y1, color);
   Tri_DrawLine(x1, y1, x2, y2, color);
   Tri_DrawLine(x2, y2, x0, y0, color);
@@ -136,8 +137,7 @@ void Tri_DrawTri(int x0, int y0, int x1, int y1, int x2, int y2,
           /\
          /  \
    (x1,y1)--(Mx,My) */
-void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My,
-                    color_t color) {
+void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My, color_t color) {
   // reciprocal slope (inverse) because we derive delta x from delta y (== 1)
   float m1 = (float)(x1 - x0) / (y1 - y0);
   float m2 = (float)(Mx - x0) / (My - y0);
@@ -153,8 +153,7 @@ void drawFlatBottom(int x0, int y0, int x1, int y1, int Mx, int My,
 //      \  /
 //       \/
 //    (x2,y2)
-void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2,
-                 color_t color) {
+void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2, color_t color) {
   float m1 = (float)(x1 - x2) / (y1 - y2);  // reciprocal slope: dx / dy
   float m2 = (float)(Mx - x2) / (My - y2);
   float xStart = x2, xEnd = x2;
@@ -165,8 +164,7 @@ void drawFlatTop(int x1, int y1, int Mx, int My, int x2, int y2,
   }
 }
 
-void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2,
-                      color_t color) {
+void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2, color_t color) {
   // sort the vertices by y-coordinate ascending (y0 < y1 < y2)
   if (y0 > y1) {
     swapInt(&y0, &y1);
@@ -194,8 +192,8 @@ void Tri_DrawTriSolid(int x0, int y0, int x1, int y1, int x2, int y2,
   }
 }
 
-void Tri_DrawTriTexture(Vec4f a, Vec4f b, Vec4f c, Vec2f uv0, Vec2f uv1,
-                        Vec2f uv2, Tri_Texture* texture) {
+void Tri_DrawTriTexture(Vec4f a, Vec4f b, Vec4f c, Vec2f uv0, Vec2f uv1, Vec2f uv2,
+                        Tri_Texture* texture) {
   // sort the vertices by y-coordinate ascending (y0 < y1 < y2)
   if (a.y > b.y) {
     swapVec4f(&a, &b);
@@ -219,9 +217,9 @@ void Tri_DrawTriTexture(Vec4f a, Vec4f b, Vec4f c, Vec2f uv0, Vec2f uv1,
   for (int y = a.y; y < b.y; y++) {
     int xStart = a.x + (y - a.y) * m1;
     int xEnd = a.x + (y - a.y) * m2;
-    /* Tri_DrawLineHorizontal(xStart, y, xEnd, y % 2 ? RED : BLUE); */
+    // Tri_DrawLineHorizontal(xStart, y, xEnd, y % 2 ? RED : BLUE);
     for (int x = xStart; x <= xEnd; x++) {
-      /* Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? RED : BLUE); */
+      // Tri_DrawPixel(x, y, x % 2 == 0 && y % 2 == 0 ? RED : BLUE);
       Tri_DrawTexel(x, y, a, b, c, uv0, uv1, uv2, texture);
     }
   }
@@ -244,8 +242,7 @@ void Tri_DrawTriTexture(Vec4f a, Vec4f b, Vec4f c, Vec2f uv0, Vec2f uv1,
 
 // RECT
 
-void Tri_DrawGrid(int x, int y, int width, int height, int distance,
-                  color_t color) {
+void Tri_DrawGrid(int x, int y, int width, int height, int distance, color_t color) {
   for (int j = y; j < height; j += distance) {
     for (int i = x; i < width; i += distance) {
       Tri_DrawPixel(i, j, color);

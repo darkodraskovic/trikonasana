@@ -31,8 +31,8 @@ bool Tri_InitDisplay() {
     return false;
   };
 
-  window = SDL_CreateWindow(NULL, 0, 0, windowWidth * pixelSize,
-                            windowHeight * pixelSize, SDL_WINDOW_BORDERLESS);
+  window = SDL_CreateWindow(NULL, 0, 0, windowWidth * pixelSize, windowHeight * pixelSize,
+                            SDL_WINDOW_BORDERLESS);
   if (!window) {
     fprintf(stderr, "Error creating SDL window.\n");
     return false;
@@ -46,8 +46,7 @@ bool Tri_InitDisplay() {
 
   initBuffers();
 
-  TRI_projectionMatrix =
-      mat4Perspective(M_PI / 3, (float)windowHeight / windowWidth, 0.1, 100);
+  TRI_projectionMatrix = mat4Perspective(M_PI / 3, (float)windowHeight / windowWidth, 0.1, 100);
   TRI_screenMatrix = mat4Screen(windowWidth, windowHeight);
 
   return true;
@@ -61,9 +60,8 @@ void initBuffers() {
   clearBuffer = (color_t*)malloc(sizeof(color_t) * windowWidth * windowHeight);
   Tri_SetClearColor(0xFF000000);
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-  renderTexture =
-      SDL_CreateTexture(Tri_renderer, SDL_PIXELFORMAT_ABGR8888,
-                        SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
+  renderTexture = SDL_CreateTexture(Tri_renderer, SDL_PIXELFORMAT_RGBA32,
+                                    SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 }
 
 void Tri_SetClearColor(color_t color) {
