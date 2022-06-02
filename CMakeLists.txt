@@ -1,24 +1,35 @@
 cmake_minimum_required(VERSION 3.8)
-project (boilerplate)
+project (trikonasana)
 
 set(lib_type SHARED)
 
 if (WIN32)
   message("Configure for WIN32")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/bin")
   set(lib_type STATIC)
+
+  set(warning_compiler_options /W3 /wd"4267" /wd"4305" /wd"4244" /wd"4996")
+  # /Od disables optimization to speed compilation.
+  add_compile_options(${warning_compiler_options} /MD /Od /JMC)
+
 elseif(UNIX)
+  message("Configure for LINUX")  
   SET(CMAKE_C_FLAGS "-g -Wall -std=gnu11 -O0")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")  
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# trini
+
 add_library(trini ${lib_type}
   Source/Trini/Array.c  
   Source/Trini/Vector.c  
   Source/Trini/Matrix.c  
   )
+
+# trikonasana
 
 add_library(engine ${lib_type}
   Source/Trikonasana/AssetLoader.c
@@ -37,6 +48,8 @@ if (WIN32)
 endif()
 
 target_link_libraries(engine PUBLIC SDL2 SDL2_image trini)
+
+# main
 
 add_executable(main
   Source/Application.c  
