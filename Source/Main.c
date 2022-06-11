@@ -22,22 +22,12 @@ void start(void) {
   msPerUpdate = 1000.f / 60;
 
   mesh = Tri_LoadObj("assets/models/cube/cube.obj");
-  /* cubeMesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj"); */
+  // mesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj");
+  // mesh = Tri_LoadObj("assets/models/f22/f22.obj");
   if (!mesh) {
     exit(1);
   }
-  /* cubeMesh->texture = Tri_LoadTexture("assets/textures/w3d_bricks.png"); */
   mesh->texture = Tri_LoadTexture("assets/textures/w3d_achtung.png");
-  /* SDL_Log("%d", cubeMesh->texture->height); */
-  /* for (int i = 0; i < arrSize(cubeMesh->uvTris); i++) { */
-  /*     Vec3i uvTri = cubeMesh->uvTris[i]; */
-  /*     Vec2f a = cubeMesh->uvs[uvTri.x]; */
-  /*     Vec2f b = cubeMesh->uvs[uvTri.y]; */
-  /*     Vec2f c = cubeMesh->uvs[uvTri.z]; */
-  /*     puts(vec2fToString(&a)); */
-  /*     puts(vec2fToString(&b)); */
-  /*     puts(vec2fToString(&c)); */
-  /* } */
 
   srand(time(NULL));  // Initialization, should only be called once.
   for (int i = 0; i < arrSize(mesh->vTris); i++) {
@@ -48,7 +38,8 @@ void start(void) {
 
   light.direction = vec3fNorm((Vec3f){1, -1, 1});
 
-  TRI_renderMask = RM_POINT | RM_WIRE | RM_SOLID | RM_TEXTURE;
+  /* TRI_renderMask = RM_POINT | RM_WIRE | RM_SOLID | RM_TEXTURE; */
+  TRI_renderMask = RM_WIRE | RM_SOLID;
 }
 
 void input() {
@@ -78,9 +69,11 @@ void input() {
 
 void update(void) {
   float speed = 0.001;
-  mesh->rotation.x += speed * 10;
-  mesh->rotation.y += speed * 10;
-  mesh->rotation.z += speed * 10;
+
+  float rotFactor = 5;
+  mesh->rotation.x += speed * rotFactor;
+  mesh->rotation.y += speed * rotFactor;
+  mesh->rotation.z += speed * rotFactor;
 
   /* cubeMesh->scale.x += speed; */
   /* cubeMesh->scale.y += speed * 4; */
@@ -91,7 +84,7 @@ void update(void) {
   mesh->position.z = 6;
 }
 
-Tri_Face Tri_TransformTri(Tri_Mesh* mesh, int i, Mat4 W) {
+Tri_Face Tri_TransformTri(Tri_Mesh* mesh, int faceIdx, Mat4 worldMat) {
   Vec3f* vertices = mesh->vertices;
   Vec3i* vTris = mesh->vTris;
   Vec2f* uvs = mesh->uvs;
@@ -99,17 +92,18 @@ Tri_Face Tri_TransformTri(Tri_Mesh* mesh, int i, Mat4 W) {
   color_t* colors = mesh->triColors;
 
   // get tri vertices
-  Vec4f a = vec4FromVec3(vertices[vTris[i].x]);
-  Vec4f b = vec4FromVec3(vertices[vTris[i].y]);
-  Vec4f c = vec4FromVec3(vertices[vTris[i].z]);
+  Vec4f a = vec4FromVec3(vertices[vTris[faceIdx].x]);
+  Vec4f b = vec4FromVec3(vertices[vTris[faceIdx].y]);
+  Vec4f c = vec4FromVec3(vertices[vTris[faceIdx].z]);
 
   // transform to world space
-  a = mat4MulVec4(W, a);
-  b = mat4MulVec4(W, b);
-  c = mat4MulVec4(W, c);
+  a = mat4MulVec4(worldMat, a);
+  b = mat4MulVec4(worldMat, b);
+  c = mat4MulVec4(worldMat, c);
 
   // TODO: transform to view space
 
+  // TODO: transform mesh normals to world/view space instead of face normal recalculation
   Vec3f normal = Tri_CalcTriNormal(vec3FromVec4(a), vec3FromVec4(b), vec3FromVec4(c));
 
   // cull
@@ -124,26 +118,31 @@ Tri_Face Tri_TransformTri(Tri_Mesh* mesh, int i, Mat4 W) {
   c = Tri_ProjectPerspective(c);
 
   // average face depth used in painter's algorithm
-  float depth = (a.z + b.z + c.z) / 3.0;
+  float averageDepth = (a.z + b.z + c.z) / 3.0;
+  Vec3f depth = {a.w, b.w, c.w};
 
   // transform to screen space
-  a = mat4MulVec4(TRI_screenMatrix, a);
-  b = mat4MulVec4(TRI_screenMatrix, b);
-  c = mat4MulVec4(TRI_screenMatrix, c);
+  Vec4f scra = mat4MulVec4(TRI_screenMatrix, (Vec4f){a.x, a.y, a.z, 1.});
+  Vec4f scrb = mat4MulVec4(TRI_screenMatrix, (Vec4f){b.x, b.y, b.z, 1.});
+  Vec4f scrc = mat4MulVec4(TRI_screenMatrix, (Vec4f){c.x, c.y, c.z, 1.});
 
   // face to render from transformed mesh face
-  Tri_Face face = {{a, b, c}};
-  face.color = Tri_SetColorBrightness(colors[i], Tri_CalcLightIntensity(&light, normal));
-  face.depth = depth;
+  Tri_Face face = {
+      .vertices = {(Vec4f){scra.x, scra.y, scra.z, depth.x},
+                   (Vec4f){scrb.x, scrb.y, scrb.z, depth.y},
+                   (Vec4f){scrc.x, scrc.y, scrc.z, depth.z}},
+      .color = Tri_SetColorBrightness(colors[faceIdx], Tri_CalcLightIntensity(&light, normal)),
+      .depth = averageDepth,
+      .cull = cull,
+      .normal = normal,
+      .texture = mesh->texture};
 
-  face.cull = cull;
-  face.normal = normal;
-
-  face.uvs[0] = uvs[uvTris[i].x];
-  face.uvs[1] = uvs[uvTris[i].y];
-  face.uvs[2] = uvs[uvTris[i].z];
-
-  face.texture = mesh->texture;
+  face.uvs[0] = uvs[uvTris[faceIdx].x];
+  face.uvs[0].y = 1 - face.uvs[0].y;
+  face.uvs[1] = uvs[uvTris[faceIdx].y];
+  face.uvs[1].y = 1 - face.uvs[1].y;
+  face.uvs[2] = uvs[uvTris[faceIdx].z];
+  face.uvs[2].y = 1 - face.uvs[2].y;
 
   return face;
 }

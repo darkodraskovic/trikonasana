@@ -90,7 +90,7 @@ void Tri_RenderFace(Tri_Face* face) {
     Tri_DrawTri(a.x, a.y, b.x, b.y, c.x, c.y, GREEN);
   }
   if (TRI_renderMask & RM_POINT) {
-    int halfSize = 2;
+    int halfSize = 1;
     int size = 2 * halfSize;
     Tri_DrawRect(a.x - halfSize, a.y - halfSize, size, size, RED);
     Tri_DrawRect(b.x - halfSize, b.y - halfSize, size, size, RED);

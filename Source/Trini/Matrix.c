@@ -24,9 +24,10 @@ Vec3f mat3MulVec3(Mat3 m, Vec3f v) {
 Mat4 mat4Screen(int scrWidth, int scrHeight) {
   Mat4 m = mat4Identity();
   m.m[0][0] = (float)scrWidth / 2;
-  m.m[0][2] = (float)scrWidth / 2;
-  m.m[1][1] = (float)scrHeight / 2;
-  m.m[1][2] = (float)scrHeight / 2;
+  m.m[0][3] = (float)scrWidth / 2;
+  // y = scrHeight - (y * scrHeight/2 + 1 * scrHeight/2)
+  m.m[1][1] = -(float)scrHeight / 2;
+  m.m[1][3] = (float)scrHeight / 2;
   return m;
 }
 
