@@ -3,6 +3,9 @@ project (trikonasana)
 
 set(lib_type SHARED)
 
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if (WIN32)
   message("Configure for WIN32")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/bin")
@@ -18,8 +21,6 @@ elseif(UNIX)
   SET(CMAKE_C_FLAGS "-g -Wall -std=gnu11 -O0")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")  
 endif()
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # trini
 
@@ -62,3 +63,18 @@ if (UNIX)
 elseif(WIN32)
   target_link_libraries(main PRIVATE engine)
 endif (UNIX)
+
+# tests
+
+add_executable(tests
+  Tests/Tests.c
+  )
+
+target_include_directories(tests PUBLIC
+  Tests/
+  Source/
+)
+
+target_link_libraries(tests PUBLIC
+  trini
+)

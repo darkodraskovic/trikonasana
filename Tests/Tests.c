@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "Trini/Array.h"
@@ -50,3 +49,17 @@ void testArray() {
 }
 
 void testVec() {}
+
+// Application
+#ifdef __MINGW32__
+int WinMain(int argc, char* argv[]) {
+#elif _WIN64
+int wmain(int argc, char* argv[]) {
+#elif __linux__
+int main(int argc, char* argv[]) {
+#endif
+
+  testArray();
+
+  return 0;
+}

@@ -4,7 +4,6 @@
 #include <time.h>
 
 #include "Application.h"
-#include "Test.c"
 #include "Trikonasana/AssetLoader.h"
 #include "Trikonasana/Color.h"
 #include "Trikonasana/Display.h"
@@ -21,7 +20,6 @@ Vec3f camPos = {0, 0, 0};
 
 void start(void) {
   msPerUpdate = 1000.f / 60;
-  testArray();
 
   mesh = Tri_LoadObj("assets/models/cube/cube.obj");
   /* cubeMesh = Tri_LoadObj("assets/models/beveled_cube/beveled_cube.obj"); */
