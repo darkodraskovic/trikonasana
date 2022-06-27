@@ -8,7 +8,6 @@ EXECUTABLE=main
 CONFIGURE=false
 COMPILE_CMD="make"
 WIN=false
-TESTS=false
 
 while getopts "t:c" option; do
     case $option in
@@ -47,6 +46,8 @@ if [ $CONFIGURE == true ]; then
         cmake -G"Ninja" ..
         mv compile_commands.json ..
     fi
+
+    exit 0
 fi
 
 
